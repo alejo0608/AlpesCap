@@ -1,0 +1,130 @@
+{
+	"info": {
+		"_postman_id": "7e7916f2-e9d6-44b6-b851-6e89bf7f52ac",
+		"name": "SISTRANS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41787954"
+	},
+	"item": [
+		{
+			"name": "RF1",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nombre\": \"Juan Andrés Moreno\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/ciudades/new/save",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ciudades",
+						"new",
+						"save"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RF2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": 822,\r\n  \"nombre\": \"Cacholota\",\r\n  \"correo\": \"cacholota@example.com\",\r\n  \"telefono\": \"3003214567\",\r\n  \"cedula\": \"CC-234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/usuarios-servicio/new/save",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"usuarios-servicio",
+						"new",
+						"save"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RF3",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": 220,\r\n  \"nombre\": \"Carlos Ruiz\",\r\n  \"correo\": \"carlos.MIAU@example.com\",\r\n  \"telefono\": \"3102453344\",\r\n  \"cedula\": \"CC-94351\",\r\n  \"comision\": 0.2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/usuarios-conductor/new/save",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"usuarios-conductor",
+						"new",
+						"save"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RF7",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"idPunto\": 450,\r\n  \"nombre\": \"Champi\",\r\n  \"latitud\": 4.261,\r\n  \"longitud\": -70.046,\r\n  \"direccion\": \"Autopista Norte #125-10\",\r\n  \"idCiudad\": 1031644517\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/puntos/new/save",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"puntos",
+						"new",
+						"save"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
