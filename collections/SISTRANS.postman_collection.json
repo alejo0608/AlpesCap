@@ -140,18 +140,13 @@
 							"type": "text"
 						},
 						{
-							"key": "nivel",
-							"value": "ESTANDAR",
-							"type": "text"
-						},
-						{
 							"key": "idUsuarioConductor",
 							"value": "2001",
 							"type": "text"
 						},
 						{
 							"key": "idCiudadExpedicion",
-							"value": "1",
+							"value": "100",
 							"type": "text"
 						}
 					]

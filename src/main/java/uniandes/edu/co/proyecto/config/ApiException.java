@@ -1,4 +1,4 @@
-package uniandes.edu.co.proyecto.comun;
+package uniandes.edu.co.proyecto.config;
 
 public class ApiException extends RuntimeException {
   private final int status;

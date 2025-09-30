@@ -1,3 +1,4 @@
+// src/main/java/uniandes/edu/co/proyecto/controller/VehiculoController.java
 package uniandes.edu.co.proyecto.controller;
 
 import org.springframework.http.ResponseEntity;
@@ -6,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import uniandes.edu.co.proyecto.repositorio.VehiculoRepository;
 
 @RestController
-@RequestMapping("/vehiculos") // Ruta base para el controlador
+@RequestMapping("/vehiculos")
 public class VehiculoController {
 
   private final VehiculoRepository repo;
@@ -15,7 +16,6 @@ public class VehiculoController {
     this.repo = repo;
   }
 
-  // POST por parámetros (coherente con los controladores que ya tienes)
   @PostMapping("/registrar")
   public ResponseEntity<String> registrarVehiculo(
       @RequestParam Long idVehiculo,
@@ -25,7 +25,6 @@ public class VehiculoController {
       @RequestParam String color,
       @RequestParam String placa,
       @RequestParam Integer capacidad,
-      @RequestParam(required = false) String nivel,
       @RequestParam Long idUsuarioConductor,
       @RequestParam Long idCiudadExpedicion) {
 
@@ -36,13 +35,14 @@ public class VehiculoController {
       return ResponseEntity.status(409).body("placa ya registrada");
     }
 
-    repo.insertarVehiculo(idVehiculo, tipo, marca, modelo, color, placa, capacidad,
-                          nivel, idUsuarioConductor, idCiudadExpedicion);
+    repo.insertarVehiculo(
+        idVehiculo, tipo, marca, modelo, color, placa, capacidad,
+        idUsuarioConductor, idCiudadExpedicion
+    );
 
     return ResponseEntity.ok("Vehiculo registrado: " + idVehiculo);
   }
 
-  // GET para consulta rápida (útil para pruebas con Postman)
   @GetMapping("/{idVehiculo}")
   public ResponseEntity<?> obtenerVehiculo(@PathVariable Long idVehiculo) {
     return repo.findById(idVehiculo)

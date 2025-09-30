@@ -10,7 +10,6 @@ import uniandes.edu.co.proyecto.modelo.Viaje;
 
 public interface ViajeRepository extends JpaRepository<Viaje, Long> {
 
-  /* ===== Validaciones de existencia (FKs) ===== */
   @Query(value = "SELECT COUNT(1) FROM solicitud_servicio WHERE id_solicitud = :id", nativeQuery = true)
   int countSolicitud(@Param("id") Long idSolicitud);
 
@@ -23,9 +22,10 @@ public interface ViajeRepository extends JpaRepository<Viaje, Long> {
   @Query(value = "SELECT COUNT(1) FROM punto_geografico WHERE id_punto = :id", nativeQuery = true)
   int countPunto(@Param("id") Long idPunto);
 
-  /* ===== Insertar viaje =====
-     Nota: horaInicio/horaFin pueden venir nulos; TO_TIMESTAMP(NULL, ...) devuelve NULL en Oracle.
-  */
+  // NUEVO: verifica si la solicitud ya tiene viaje
+  @Query(value = "SELECT COUNT(1) FROM viaje WHERE id_solicitud = :id", nativeQuery = true)
+  int countViajePorSolicitud(@Param("id") Long idSolicitud);
+
   @Modifying
   @Transactional
   @Query(value = """
@@ -41,17 +41,16 @@ public interface ViajeRepository extends JpaRepository<Viaje, Long> {
          :idUsuarioConductor, :idVehiculo, :idPuntoPartida, :idSolicitud)
       """, nativeQuery = true)
   void insertarViaje(@Param("idViaje") Long idViaje,
-                     @Param("fechaAsignacion") String fechaAsignacion,   // "YYYY-MM-DD"
-                     @Param("horaInicio") String horaInicio,             // "YYYY-MM-DD HH:MM:SS" o null
-                     @Param("horaFin") String horaFin,                   // idem
-                     @Param("distanciaKm") Double distanciaKm,           // puede ser null
-                     @Param("costoTotal") Double costoTotal,             // puede ser null
+                     @Param("fechaAsignacion") String fechaAsignacion,
+                     @Param("horaInicio") String horaInicio,
+                     @Param("horaFin") String horaFin,
+                     @Param("distanciaKm") Double distanciaKm,
+                     @Param("costoTotal") Double costoTotal,
                      @Param("idUsuarioConductor") Long idUsuarioConductor,
                      @Param("idVehiculo") Long idVehiculo,
                      @Param("idPuntoPartida") Long idPuntoPartida,
-                     @Param("idSolicitud") Long idSolicitud);            // puede ser null
+                     @Param("idSolicitud") Long idSolicitud);
 
-  /* ===== Finalizar/actualizar viaje (setear métricas) ===== */
   @Modifying
   @Transactional
   @Query(value = """
@@ -65,8 +64,8 @@ public interface ViajeRepository extends JpaRepository<Viaje, Long> {
        WHERE id_viaje = :idViaje
       """, nativeQuery = true)
   int actualizarFinal(@Param("idViaje") Long idViaje,
-                      @Param("horaInicio") String horaInicio,     // puede ser null
-                      @Param("horaFin") String horaFin,           // puede ser null
+                      @Param("horaInicio") String horaInicio,
+                      @Param("horaFin") String horaFin,
                       @Param("distanciaKm") Double distanciaKm,
                       @Param("costoTotal") Double costoTotal);
 }

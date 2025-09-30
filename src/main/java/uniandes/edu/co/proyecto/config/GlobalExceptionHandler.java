@@ -1,4 +1,4 @@
-package uniandes.edu.co.proyecto.comun;
+package uniandes.edu.co.proyecto.config;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
