@@ -1,19 +1,19 @@
 {
 	"info": {
-		"_postman_id": "7e7916f2-e9d6-44b6-b851-6e89bf7f52ac",
-		"name": "SISTRANS",
+		"_postman_id": "a7c8f0b1-5c9f-4b8e-9b0c-2025a1bcde01",
+		"name": "AlpesCab - RF y RFC",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "41787954"
+		"_exporter_id": "alpescab-helper"
 	},
 	"item": [
 		{
-			"name": "RF1",
+			"name": "RF1 - Crear Ciudad (JSON)",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"nombre\": \"Juan Andrés Moreno\"\r\n}",
+					"raw": "{\n  \"nombre\": \"Barranquilla\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -37,13 +37,13 @@
 			"response": []
 		},
 		{
-			"name": "RF2",
+			"name": "RF2 - Crear UsuarioServicio (JSON)",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"id\": 822,\r\n  \"nombre\": \"Cacholota\",\r\n  \"correo\": \"cacholota@example.com\",\r\n  \"telefono\": \"3003214567\",\r\n  \"cedula\": \"CC-234\"\r\n}",
+					"raw": "{\n  \"id\": 1001,\n  \"nombre\": \"Carlos Perez\",\n  \"correo\": \"carlos@example.com\",\n  \"telefono\": \"3001112222\",\n  \"cedula\": \"CC-123\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -67,13 +67,13 @@
 			"response": []
 		},
 		{
-			"name": "RF3",
+			"name": "RF3 - Crear UsuarioConductor (JSON)",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"id\": 220,\r\n  \"nombre\": \"Carlos Ruiz\",\r\n  \"correo\": \"carlos.MIAU@example.com\",\r\n  \"telefono\": \"3102453344\",\r\n  \"cedula\": \"CC-94351\",\r\n  \"comision\": 0.2\r\n}",
+					"raw": "{\n  \"id\": 2001,\n  \"nombre\": \"Ana Lopez\",\n  \"correo\": \"ana@example.com\",\n  \"telefono\": \"3012223333\",\n  \"cedula\": \"CC-987\",\n  \"comision\": 0.6\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -97,13 +97,208 @@
 			"response": []
 		},
 		{
-			"name": "RF7",
+			"name": "RF4 - Registrar Vehículo (x-www-form-urlencoded)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idVehiculo",
+							"value": "3001",
+							"type": "text"
+						},
+						{
+							"key": "tipo",
+							"value": "CARRO",
+							"type": "text"
+						},
+						{
+							"key": "marca",
+							"value": "Toyota",
+							"type": "text"
+						},
+						{
+							"key": "modelo",
+							"value": "Corolla",
+							"type": "text"
+						},
+						{
+							"key": "color",
+							"value": "Rojo",
+							"type": "text"
+						},
+						{
+							"key": "placa",
+							"value": "ABC123",
+							"type": "text"
+						},
+						{
+							"key": "capacidad",
+							"value": "4",
+							"type": "text"
+						},
+						{
+							"key": "nivel",
+							"value": "ESTANDAR",
+							"type": "text"
+						},
+						{
+							"key": "idUsuarioConductor",
+							"value": "2001",
+							"type": "text"
+						},
+						{
+							"key": "idCiudadExpedicion",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/vehiculos/registrar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"vehiculos",
+						"registrar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RF5 - Registrar Disponibilidad (x-www-form-urlencoded)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idDisponibilidad",
+							"value": "301",
+							"type": "text"
+						},
+						{
+							"key": "dia",
+							"value": "LUNES",
+							"type": "text"
+						},
+						{
+							"key": "horaInicio",
+							"value": "2025-09-01 08:00:00",
+							"type": "text"
+						},
+						{
+							"key": "horaFin",
+							"value": "2025-09-01 12:00:00",
+							"type": "text"
+						},
+						{
+							"key": "idVehiculo",
+							"value": "3001",
+							"type": "text"
+						},
+						{
+							"key": "idUsuarioConductor",
+							"value": "2001",
+							"type": "text"
+						},
+						{
+							"key": "tipoServicio",
+							"value": "PASAJEROS",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/disponibilidades/registrar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"disponibilidades",
+						"registrar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RF6 - Registrar Disponibilidad por tipo (x-www-form-urlencoded)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idDisponibilidad",
+							"value": "302",
+							"type": "text"
+						},
+						{
+							"key": "dia",
+							"value": "LUNES",
+							"type": "text"
+						},
+						{
+							"key": "horaInicio",
+							"value": "2025-09-01 13:00:00",
+							"type": "text"
+						},
+						{
+							"key": "horaFin",
+							"value": "2025-09-01 17:00:00",
+							"type": "text"
+						},
+						{
+							"key": "idVehiculo",
+							"value": "3001",
+							"type": "text"
+						},
+						{
+							"key": "idUsuarioConductor",
+							"value": "2001",
+							"type": "text"
+						},
+						{
+							"key": "tipoServicio",
+							"value": "COMIDA",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/disponibilidades/registrar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"disponibilidades",
+						"registrar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RF7 - Crear Punto Geográfico (JSON)",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"idPunto\": 450,\r\n  \"nombre\": \"Champi\",\r\n  \"latitud\": 4.261,\r\n  \"longitud\": -70.046,\r\n  \"direccion\": \"Autopista Norte #125-10\",\r\n  \"idCiudad\": 1031644517\r\n}",
+					"raw": "{\n  \"idPunto\": 4001,\n  \"nombre\": \"Aeropuerto\",\n  \"latitud\": 4.701,\n  \"longitud\": -74.146,\n  \"direccion\": \"Calle 26 #103-9\",\n  \"idCiudad\": 1\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -121,6 +316,403 @@
 						"puntos",
 						"new",
 						"save"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RF8a - Crear Solicitud de Servicio (x-www-form-urlencoded)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idSolicitud",
+							"value": "5001",
+							"type": "text"
+						},
+						{
+							"key": "tipo",
+							"value": "PASAJEROS",
+							"type": "text"
+						},
+						{
+							"key": "nivel",
+							"value": "ESTANDAR",
+							"type": "text"
+						},
+						{
+							"key": "fecha",
+							"value": "2025-09-01",
+							"type": "text"
+						},
+						{
+							"key": "estado",
+							"value": "CREADA",
+							"type": "text"
+						},
+						{
+							"key": "idUsuarioServicio",
+							"value": "1001",
+							"type": "text"
+						},
+						{
+							"key": "idPuntoPartida",
+							"value": "4001",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/solicitudes/registrar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"solicitudes",
+						"registrar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RF8b - Asignar Viaje (x-www-form-urlencoded)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idViaje",
+							"value": "6001",
+							"type": "text"
+						},
+						{
+							"key": "fechaAsignacion",
+							"value": "2025-09-01",
+							"type": "text"
+						},
+						{
+							"key": "horaInicio",
+							"value": "2025-09-01 14:05:00",
+							"type": "text"
+						},
+						{
+							"key": "idUsuarioConductor",
+							"value": "2001",
+							"type": "text"
+						},
+						{
+							"key": "idVehiculo",
+							"value": "3001",
+							"type": "text"
+						},
+						{
+							"key": "idPuntoPartida",
+							"value": "4001",
+							"type": "text"
+						},
+						{
+							"key": "idSolicitud",
+							"value": "5001",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/viajes/registrar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"viajes",
+						"registrar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RF9 - Finalizar Viaje (x-www-form-urlencoded)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idViaje",
+							"value": "6001",
+							"type": "text"
+						},
+						{
+							"key": "horaFin",
+							"value": "2025-09-01 14:45:00",
+							"type": "text"
+						},
+						{
+							"key": "distanciaKm",
+							"value": "12.8",
+							"type": "text"
+						},
+						{
+							"key": "costoTotal",
+							"value": "32000",
+							"type": "text"
+						},
+						{
+							"key": "horaInicio",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/viajes/finalizar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"viajes",
+						"finalizar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RF10 - Reseña del Cliente al Conductor (x-www-form-urlencoded)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idResenia",
+							"value": "9001",
+							"type": "text"
+						},
+						{
+							"key": "idViaje",
+							"value": "6001",
+							"type": "text"
+						},
+						{
+							"key": "calificacion",
+							"value": "5",
+							"type": "text"
+						},
+						{
+							"key": "comentario",
+							"value": "Excelente servicio",
+							"type": "text"
+						},
+						{
+							"key": "fecha",
+							"value": "2025-09-01",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/resenias/registrar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"resenias",
+						"registrar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RF11 - Reseña del Conductor al Cliente (x-www-form-urlencoded)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idResenia",
+							"value": "9002",
+							"type": "text"
+						},
+						{
+							"key": "idViaje",
+							"value": "6001",
+							"type": "text"
+						},
+						{
+							"key": "calificacion",
+							"value": "4",
+							"type": "text"
+						},
+						{
+							"key": "comentario",
+							"value": "Buen pasajero, puntual",
+							"type": "text"
+						},
+						{
+							"key": "fecha",
+							"value": "2025-09-01",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/resenias/registrar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"resenias",
+						"registrar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RFC1 - Histórico por UsuarioServicio (GET)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/reportes/historico/usuarios-servicio/1001?fini=2025-08-01&ffin=2025-09-30",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reportes",
+						"historico",
+						"usuarios-servicio",
+						"1001"
+					],
+					"query": [
+						{
+							"key": "fini",
+							"value": "2025-08-01"
+						},
+						{
+							"key": "ffin",
+							"value": "2025-09-30"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RFC2 - Top 20 Conductores (GET)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/reportes/top-conductores?fini=2025-08-01&ffin=2025-09-30",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reportes",
+						"top-conductores"
+					],
+					"query": [
+						{
+							"key": "fini",
+							"value": "2025-08-01"
+						},
+						{
+							"key": "ffin",
+							"value": "2025-09-30"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RFC3 - Ganancias por Conductor (GET)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/reportes/ganancias-conductor/2001?fini=2025-08-01&ffin=2025-09-30",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reportes",
+						"ganancias-conductor",
+						"2001"
+					],
+					"query": [
+						{
+							"key": "fini",
+							"value": "2025-08-01"
+						},
+						{
+							"key": "ffin",
+							"value": "2025-09-30"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RFC4 - Utilización por Ciudad y Fechas (GET)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/reportes/utilizacion?idCiudad=1&fini=2025-08-01&ffin=2025-09-30",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reportes",
+						"utilizacion"
+					],
+					"query": [
+						{
+							"key": "idCiudad",
+							"value": "1"
+						},
+						{
+							"key": "fini",
+							"value": "2025-08-01"
+						},
+						{
+							"key": "ffin",
+							"value": "2025-09-30"
+						}
 					]
 				}
 			},
