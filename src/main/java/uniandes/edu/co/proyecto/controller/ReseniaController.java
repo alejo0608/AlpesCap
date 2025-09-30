@@ -1,3 +1,4 @@
+// src/main/java/uniandes/edu/co/proyecto/controller/ReseniaController.java
 package uniandes.edu.co.proyecto.controller;
 
 import org.springframework.http.ResponseEntity;
@@ -14,34 +15,44 @@ public class ReseniaController {
   public ReseniaController(ReseniaRepository repo) { this.repo = repo; }
 
   @PostMapping("/registrar")
-  public ResponseEntity<String> registrarResenia(
+  public ResponseEntity<String> registrar(
       @RequestParam Long idResenia,
       @RequestParam Long idViaje,
-      @RequestParam Integer calificacion,     // 0..5
+      @RequestParam Integer calificacion,
       @RequestParam(required = false) String comentario,
-      @RequestParam String fecha              // "YYYY-MM-DD"
+      @RequestParam String fecha,      // YYYY-MM-DD
+      @RequestParam String autorRol    // USR|COND (admitimos CLIENTE|CONDUCTOR y los mapeamos)
   ) {
-    // PK duplicada
     if (repo.existsById(idResenia)) {
       return ResponseEntity.status(409).body("id_resenia ya existe");
     }
-    // FK viaje
     if (repo.countViaje(idViaje) == 0) {
       return ResponseEntity.status(404).body("Viaje no existe: " + idViaje);
     }
-    // Check de negocio/BD: calificación en rango
     if (calificacion == null || calificacion < 0 || calificacion > 5) {
-      return ResponseEntity.badRequest().body("calificacion inválida (0..5)");
+      return ResponseEntity.badRequest().body("calificacion debe estar en [0..5]");
     }
 
-    repo.insertarResenia(idResenia, calificacion, comentario, fecha, idViaje);
-    return ResponseEntity.ok("Reseña registrada: " + idResenia);
-  }
+    String rol = (autorRol == null ? "" : autorRol.trim().toUpperCase());
+    // Mapear sinónimos amigables
+    if (rol.equals("CLIENTE")) rol = "USR";
+    if (rol.equals("CONDUCTOR")) rol = "COND";
+    if (!(rol.equals("USR") || rol.equals("COND"))) {
+      return ResponseEntity.badRequest().body("autorRol debe ser USR o COND");
+    }
 
-  @GetMapping("/{idResenia}")
-  public ResponseEntity<?> obtener(@PathVariable Long idResenia) {
-    return repo.findById(idResenia)
-        .<ResponseEntity<?>>map(ResponseEntity::ok)
-        .orElseGet(() -> ResponseEntity.notFound().build());
+    if (repo.countPorViajeYRol(idViaje, rol) > 0) {
+      return ResponseEntity.status(409).body("Ya existe reseña para ese viaje con el mismo autor_rol");
+    }
+
+    repo.insertarResenia(
+        idResenia,
+        calificacion,
+        comentario == null ? "" : comentario,
+        fecha,
+        idViaje,
+        rol
+    );
+    return ResponseEntity.ok("Resenia registrada: " + idResenia + " (rol=" + rol + ")");
   }
 }
