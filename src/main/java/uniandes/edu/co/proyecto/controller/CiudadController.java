@@ -1,28 +1,40 @@
 package uniandes.edu.co.proyecto.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import uniandes.edu.co.proyecto.modelo.Ciudad;
 import uniandes.edu.co.proyecto.repositorio.CiudadRepository;
 
+import java.util.Map;
+
 @RestController
+@RequestMapping("/ciudades")
 public class CiudadController {
 
-    @Autowired
-    private CiudadRepository ciudadRepository;
+  private final CiudadRepository repo;
 
-    @PostMapping("/ciudades/new/save") // <-- usa comillas normales y empieza con "/"
-    public ResponseEntity<?> insertCiudad(@RequestBody Ciudad ciudad) {
-        try {
-            ciudadRepository.insertarCiudad(ciudad.getIdCiudad(), ciudad.getNombre());
-            return ResponseEntity.status(HttpStatus.CREATED).body("Ciudad registrada correctamente");
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error al registrar la ciudad", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+  public CiudadController(CiudadRepository repo) { this.repo = repo; }
+
+  @PostMapping("/new/save")
+  public ResponseEntity<?> crear(@RequestBody Ciudad body) {
+    if (body.getNombre() == null || body.getNombre().isBlank()) {
+      return ResponseEntity.badRequest().body("nombre requerido");
     }
+    var nombre = body.getNombre().trim();
+    if (repo.existsByNombreIgnoreCase(nombre)) {
+      return ResponseEntity.status(409).body("nombre ya existe");
+    }
+    var c = new Ciudad();
+    c.setNombre(nombre);
+    var saved = repo.save(c); // usa la SEQUENCE -> ID autogenerado
+    return ResponseEntity.ok(Map.of("idCiudad", saved.getIdCiudad(), "nombre", saved.getNombre()));
+  }
+
+  @GetMapping("/por-nombre")
+public org.springframework.http.ResponseEntity<?> porNombre(@RequestParam String nombre) {
+  return repo.findByNombreIgnoreCase(nombre.trim())
+      .<org.springframework.http.ResponseEntity<?>>map(org.springframework.http.ResponseEntity::ok)
+      .orElseGet(() -> org.springframework.http.ResponseEntity.notFound().build());
+}
+
 }

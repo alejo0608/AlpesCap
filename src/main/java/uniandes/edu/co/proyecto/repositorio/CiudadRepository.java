@@ -17,4 +17,8 @@ public interface CiudadRepository extends JpaRepository<Ciudad, Long> {
         @Param("idCiudad") Long idCiudad,
         @Param("nombre") String nombre
     );
+
+    boolean existsByNombreIgnoreCase(String nombre);
+    java.util.Optional<uniandes.edu.co.proyecto.modelo.Ciudad> findByNombreIgnoreCase(String nombre);
+    
 }
