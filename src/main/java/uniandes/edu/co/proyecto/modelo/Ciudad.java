@@ -1,9 +1,12 @@
+// src/main/java/uniandes/edu/co/proyecto/modelo/Ciudad.java
 package uniandes.edu.co.proyecto.modelo;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "CIUDAD")
+@Table(name = "CIUDAD", uniqueConstraints = {
+    @UniqueConstraint(name = "UQ_CIUDAD_NOMBRE", columnNames = "NOMBRE")
+})
 public class Ciudad {
 
   @Id
@@ -12,7 +15,7 @@ public class Ciudad {
   @Column(name = "ID_CIUDAD")
   private Long idCiudad;
 
-  @Column(name = "NOMBRE", nullable = false, unique = true, length = 250)
+  @Column(name = "NOMBRE", nullable = false, length = 250)
   private String nombre;
 
   public Long getIdCiudad() { return idCiudad; }
