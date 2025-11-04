@@ -3,17 +3,34 @@ package uniandes.edu.co.proyecto.repositorio;
 
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 import uniandes.edu.co.proyecto.modelo.TarjetaCredito;
 
 public interface TarjetaCreditoRepository extends JpaRepository<TarjetaCredito, Long> {
 
-  // RF8: ¿el usuario tiene al menos un medio de pago?
+  // Alias para mantener compatibilidad con otros servicios (RF8 usa countByUsuario)
   @Query(value = "SELECT COUNT(1) FROM TARJETA_CREDITO WHERE ID_USUARIO_SERVICIO = :id", nativeQuery = true)
-  int countByUsuarioServicio(@Param("id") Long idUsuarioServicio);
+  int countByUsuario(@Param("id") Long idUsuarioServicio);
 
-  // Útiles para validaciones (no indispensables para RF8, pero consistentes con el modelo)
-  boolean existsByNumeroIgnoreCase(String numero);
+  // Lo que tu controlador actual está llamando
+  @Query(value = "SELECT COUNT(1) FROM USUARIO_SERVICIO WHERE ID_USUARIO_SERVICIO = :id", nativeQuery = true)
+  int countUsuarioServicio(@Param("id") Long idUsuarioServicio);
 
-  @Query(value = "SELECT COUNT(1) FROM TARJETA_CREDITO WHERE ID_USUARIO_SERVICIO = :id AND UPPER(NUMERO)=UPPER(:num)", nativeQuery = true)
-  int countByUsuarioYNumero(@Param("id") Long idUsuarioServicio, @Param("num") String numero);
+  @Query(value = "SELECT COUNT(1) FROM TARJETA_CREDITO WHERE NUMERO = :numero", nativeQuery = true)
+  int countByNumero(@Param("numero") Long numero);
+
+  @Modifying @Transactional
+  @Query(value = """
+      INSERT INTO TARJETA_CREDITO
+        (ID_TARJETA, NUMERO, NOMBRE, MES_VENCIMIENTO, ANIO_VENCIMIENTO, CODIGO_SEGURIDAD, ID_USUARIO_SERVICIO)
+      VALUES
+        (:idTarjeta, :numero, :nombre, :mes, :anio, :cvv, :idUsuarioServicio)
+      """, nativeQuery = true)
+  void insertarTarjeta(@Param("idTarjeta") Long idTarjeta,
+                       @Param("numero") Long numero,
+                       @Param("nombre") String nombre,
+                       @Param("mes") Integer mesVencimiento,
+                       @Param("anio") Integer anioVencimiento,
+                       @Param("cvv") Integer codigoSeguridad,
+                       @Param("idUsuarioServicio") Long idUsuarioServicio);
 }

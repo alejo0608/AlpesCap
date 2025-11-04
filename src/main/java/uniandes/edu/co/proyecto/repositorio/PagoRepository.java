@@ -24,4 +24,18 @@ public interface PagoRepository extends JpaRepository<Pago, Long> {
   @Transactional
   @Query(value = "UPDATE PAGO SET ESTADO = :estado WHERE ID_PAGO = :idPago", nativeQuery = true)
   int actualizarEstado(@Param("idPago") Long idPago, @Param("estado") String estado);
+
+  @Modifying @Transactional
+  @Query(value = """
+      INSERT INTO PAGO
+        (ID_PAGO, ID_VIAJE, MONTO, FECHA, ESTADO)
+      VALUES
+        (:idPago, :idViaje, :monto, TO_DATE(:fecha,'YYYY-MM-DD'), :estado)
+      """, nativeQuery = true)
+  void insertarPago(@Param("idPago") Long idPago,
+                    @Param("idViaje") Long idViaje,
+                    @Param("monto") Double monto,
+                    @Param("fecha") String fecha,
+                    @Param("estado") String estado);
+
 }

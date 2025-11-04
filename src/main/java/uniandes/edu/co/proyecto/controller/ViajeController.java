@@ -15,15 +15,11 @@ import java.time.format.DateTimeFormatter;
 @RequestMapping("/viajes")
 public class ViajeController {
 
-  // Repositorio
   private final ViajeRepository repo;
-
-  // 🔹 NUEVO: Servicio para RF9
   private final ViajeService viajeService;
 
   private static final DateTimeFormatter TS_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-  // ✅ Constructor con ambos beans
   public ViajeController(ViajeRepository repo, ViajeService viajeService) {
     this.repo = repo;
     this.viajeService = viajeService;
@@ -32,9 +28,9 @@ public class ViajeController {
   @PostMapping("/registrar")
   public ResponseEntity<String> registrarViaje(
       @RequestParam Long   idViaje,
-      @RequestParam String fechaAsignacion,
-      @RequestParam(required = false) String horaInicio,
-      @RequestParam(required = false) String horaFin,
+      @RequestParam String fechaAsignacion,               // YYYY-MM-DD
+      @RequestParam(required = false) String horaInicio,  // YYYY-MM-DD HH:MM:SS (opcional)
+      @RequestParam(required = false) String horaFin,     // IGNORADO en el insert (HORA_FIN queda NULL)
       @RequestParam(required = false) Double distanciaKm,
       @RequestParam(required = false) Double costoTotal,
       @RequestParam Long   idUsuarioConductor,
@@ -42,17 +38,27 @@ public class ViajeController {
       @RequestParam Long   idPuntoPartida,
       @RequestParam Long   idSolicitud) {
 
+    // 1) Unicidad de id
     if (repo.existsById(idViaje)) {
       return ResponseEntity.status(409).body("id_viaje ya existe");
     }
 
+    // 2) Validación de fecha/hora
+    final String tsInicio;
     try {
-      LocalDate.parse(fechaAsignacion);
-      if (horaInicio != null && !horaInicio.isBlank())  LocalDateTime.parse(horaInicio, TS_FMT);
-      if (horaFin    != null && !horaFin.isBlank())     LocalDateTime.parse(horaFin, TS_FMT);
-      if (horaInicio != null && !horaInicio.isBlank()
-       && horaFin    != null && !horaFin.isBlank()) {
-        if (LocalDateTime.parse(horaFin, TS_FMT).isBefore(LocalDateTime.parse(horaInicio, TS_FMT))) {
+      LocalDate.parse(fechaAsignacion); // YYYY-MM-DD
+      if (horaInicio == null || horaInicio.isBlank()) {
+        tsInicio = LocalDateTime.now().format(TS_FMT);
+      } else {
+        // valida formato
+        LocalDateTime.parse(horaInicio, TS_FMT);
+        tsInicio = horaInicio.trim();
+      }
+      // Validación opcional de horaFin si la mandan (no se usa en insert)
+      if (horaFin != null && !horaFin.isBlank()) {
+        LocalDateTime fin = LocalDateTime.parse(horaFin, TS_FMT);
+        LocalDateTime ini = LocalDateTime.parse(tsInicio, TS_FMT);
+        if (fin.isBefore(ini)) {
           return ResponseEntity.badRequest().body("hora_fin no puede ser menor que hora_inicio");
         }
       }
@@ -60,6 +66,7 @@ public class ViajeController {
       return ResponseEntity.badRequest().body("Formato de fecha/hora inválido. Use YYYY-MM-DD y YYYY-MM-DD HH:MM:SS");
     }
 
+    // 3) Validaciones FK “amigables” (si tienes estos métodos en el repo)
     if (repo.countConductor(idUsuarioConductor) == 0) {
       return ResponseEntity.status(404).body("UsuarioConductor no existe: " + idUsuarioConductor);
     }
@@ -73,27 +80,40 @@ public class ViajeController {
       return ResponseEntity.status(404).body("SolicitudServicio no existe: " + idSolicitud);
     }
 
+    // 4) Una solicitud -> un viaje
     if (repo.countViajePorSolicitud(idSolicitud) > 0) {
       return ResponseEntity.status(409).body("La solicitud ya tiene un viaje asignado");
     }
 
+    // 5) Defaults de negocio
     Double dist = (distanciaKm == null) ? 0.0 : distanciaKm;
     Double costo = (costoTotal == null) ? 0.0 : costoTotal;
 
-    repo.insertarViaje(idViaje, fechaAsignacion,
-                       emptyToNull(horaInicio), emptyToNull(horaFin),
-                       dist, costo,
-                       idUsuarioConductor, idVehiculo, idPuntoPartida, idSolicitud);
+    // 6) INSERT: sin horaFin (queda NULL). Firma de repo:
+    // insertarViajeInicio(Long idViaje, String fechaAsignacion, String horaInicio,
+    //                     Double distanciaKm, Double costoTotal,
+    //                     Long idConductor, Long idVehiculo, Long idPuntoPartida, Long idSolicitud)
+    repo.insertarViajeInicio(
+        idViaje,
+        fechaAsignacion,
+        tsInicio,
+        dist,
+        costo,
+        idUsuarioConductor,
+        idVehiculo,
+        idPuntoPartida,
+        idSolicitud
+    );
 
     return ResponseEntity.ok("Viaje registrado: " + idViaje);
   }
 
-  //RF9 FINALIZAR
+  // RF9: Finalizar viaje “nuevo” (servicio)
   @PostMapping("/{idViaje}/finalizar")
   public ResponseEntity<?> finalizarRF9(@PathVariable Long idViaje,
                                         @RequestParam Double distanciaKm) {
     try {
-      viajeService.finalizarViaje(idViaje, distanciaKm); 
+      viajeService.finalizarViaje(idViaje, distanciaKm);
       return ResponseEntity.ok("Viaje finalizado: " + idViaje);
     } catch (IllegalArgumentException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
@@ -105,6 +125,7 @@ public class ViajeController {
     }
   }
 
+  // Legacy (si aún lo usa tu compa)
   @Deprecated
   @PostMapping("/finalizar")
   public ResponseEntity<String> finalizarViajeLegacy(
@@ -149,4 +170,3 @@ public class ViajeController {
     return (s == null || s.isBlank()) ? null : s;
   }
 }
-

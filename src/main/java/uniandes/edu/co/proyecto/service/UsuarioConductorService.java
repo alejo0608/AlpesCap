@@ -1,16 +1,19 @@
+// src/main/java/uniandes/edu/co/proyecto/service/UsuarioConductorService.java
 package uniandes.edu.co.proyecto.service;
 
-import uniandes.edu.co.proyecto.modelo.UsuarioConductor;
-import java.util.List;
 import java.util.Optional;
+import uniandes.edu.co.proyecto.modelo.UsuarioConductor;
+import uniandes.edu.co.proyecto.web.UsuarioConductorRequest;
 
 public interface UsuarioConductorService {
 
-    UsuarioConductor registrarConductor(UsuarioConductor conductor);
+  UsuarioConductor registrarConductor(UsuarioConductorRequest request);
 
-    List<UsuarioConductor> obtenerTodos();
+  Optional<UsuarioConductor> obtenerConductor(Long idConductor);
 
-    Optional<UsuarioConductor> buscarPorId(Long id);
+  // Opcional: actualizar básicos (útil si te piden RFs de edición luego)
+  UsuarioConductor actualizarConductor(Long idConductor, UsuarioConductorRequest request);
 
-    void eliminarConductor(Long id);
+  // Opcional: borrar con guardas de integridad de negocio
+  void eliminarConductor(Long idConductor);
 }

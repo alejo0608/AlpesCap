@@ -1,53 +1,97 @@
+// src/main/java/uniandes/edu/co/proyecto/controller/PagoController.java
 package uniandes.edu.co.proyecto.controller;
 
+import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import uniandes.edu.co.proyecto.repositorio.PagoRepository;
+import uniandes.edu.co.proyecto.service.PagoService;
+import uniandes.edu.co.proyecto.web.PagoRequest;
 
 @RestController
 @RequestMapping("/pagos")
 public class PagoController {
 
-  private final PagoRepository repo;
+  private final PagoService service;
 
-  public PagoController(PagoRepository repo) { this.repo = repo; }
+  public PagoController(PagoService service) {
+    this.service = service;
+  }
 
   @PostMapping("/registrar")
-  public ResponseEntity<String> registrarPago(
+  public ResponseEntity<?> registrar(@RequestBody PagoRequest body) {
+    try {
+      var p = service.registrar(body.idPago(), body.idViaje(), body.monto(), body.fecha(), body.estado());
+      return ResponseEntity.ok(Map.of(
+          "idPago", p.getIdPago(),
+          "idViaje", p.getViaje().getIdViaje(),
+          "monto", p.getMonto(),
+          "fecha", p.getFecha(),
+          "estado", p.getEstado()
+      ));
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
+    } catch (IllegalStateException e) {
+      return ResponseEntity.status(409).body(e.getMessage());
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(404).body(e.getMessage());
+    }
+  }
+
+  @PostMapping(value = "/registrar-form", consumes = "application/x-www-form-urlencoded")
+  public ResponseEntity<?> registrarForm(
       @RequestParam Long idPago,
       @RequestParam Long idViaje,
       @RequestParam Double monto,
-      @RequestParam String fecha,      // "YYYY-MM-DD"
-      @RequestParam String estado      // APROBADO | RECHAZADO | EN ESPERA | PENDIENTE (según tu DDL)
+      @RequestParam String fecha,     // YYYY-MM-DD
+      @RequestParam String estado     // EN ESPERA | COMPLETADO | RECHAZADO
   ) {
-    // PK duplicada
-    if (repo.existsById(idPago)) {
-      return ResponseEntity.status(409).body("id_pago ya existe");
+    try {
+      var p = service.registrar(idPago, idViaje, monto, fecha, estado);
+      return ResponseEntity.ok(Map.of(
+          "idPago", p.getIdPago(),
+          "idViaje", p.getViaje().getIdViaje(),
+          "monto", p.getMonto(),
+          "fecha", p.getFecha(),
+          "estado", p.getEstado()
+      ));
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
+    } catch (IllegalStateException e) {
+      return ResponseEntity.status(409).body(e.getMessage());
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(404).body(e.getMessage());
     }
-    // FK viaje
-    if (repo.countViaje(idViaje) == 0) {
-      return ResponseEntity.status(404).body("Viaje no existe: " + idViaje);
-    }
-    // 1:1 pago↔viaje
-    if (repo.countPagoPorViaje(idViaje) > 0) {
-      return ResponseEntity.status(409).body("El viaje ya tiene pago registrado");
-    }
-    // Validación simple de monto
-    if (monto == null || monto < 0) {
-      return ResponseEntity.badRequest().body("monto inválido (>= 0)");
-    }
-
-    // Normalizar estado (deja que el CHECK de la BD valide exactamente)
-    String estadoUp = estado == null ? null : estado.trim().toUpperCase();
-    repo.insertarPago(idPago, monto, fecha, estadoUp, idViaje);
-    return ResponseEntity.ok("Pago registrado: " + idPago);
   }
 
   @GetMapping("/{idPago}")
   public ResponseEntity<?> obtener(@PathVariable Long idPago) {
-    return repo.findById(idPago)
-        .<ResponseEntity<?>>map(ResponseEntity::ok)
+    return service.obtener(idPago)
+        .<ResponseEntity<?>>map(p -> ResponseEntity.ok(Map.of(
+            "idPago", p.getIdPago(),
+            "idViaje", p.getViaje().getIdViaje(),
+            "monto", p.getMonto(),
+            "fecha", p.getFecha(),
+            "estado", p.getEstado()
+        )))
         .orElseGet(() -> ResponseEntity.notFound().build());
+  }
+
+  @PatchMapping("/{idPago}/estado")
+  public ResponseEntity<?> actualizarEstado(
+      @PathVariable Long idPago,
+      @RequestParam String estado   // EN ESPERA | COMPLETADO | RECHAZADO
+  ) {
+    try {
+      var p = service.actualizarEstado(idPago, estado);
+      return ResponseEntity.ok(Map.of(
+          "idPago", p.getIdPago(),
+          "estado", p.getEstado()
+      ));
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(404).body(e.getMessage());
+    }
   }
 }

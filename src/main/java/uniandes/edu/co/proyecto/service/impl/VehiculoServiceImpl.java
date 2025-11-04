@@ -40,7 +40,7 @@ public class VehiculoServiceImpl implements VehiculoService {
         }
 
         // Verificar que el conductor existe
-        UsuarioConductor conductor = usuarioConductorRepository.findById(vehiculo.getConductor().getId())
+        UsuarioConductor conductor = usuarioConductorRepository.findById(vehiculo.getConductor().getIdUsuarioConductor())
                 .orElseThrow(() -> new IllegalArgumentException("El conductor especificado no existe"));
 
         // Verificar que la ciudad existe

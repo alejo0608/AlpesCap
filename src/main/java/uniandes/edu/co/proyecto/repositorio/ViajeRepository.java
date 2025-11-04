@@ -10,6 +10,8 @@ import uniandes.edu.co.proyecto.modelo.Viaje;
 
 public interface ViajeRepository extends JpaRepository<Viaje, Long> {
 
+
+
   @Query(value = "SELECT COUNT(1) FROM solicitud_servicio WHERE id_solicitud = :id", nativeQuery = true)
   int countSolicitud(@Param("id") Long idSolicitud);
 
@@ -32,30 +34,35 @@ public interface ViajeRepository extends JpaRepository<Viaje, Long> {
   @Query(value = "SELECT COUNT(1) FROM viaje WHERE id_solicitud = :id", nativeQuery = true)
   int countViajePorSolicitud(@Param("id") Long idSolicitud);
 
-  @Modifying
-  @Transactional
   @Query(value = """
-      INSERT INTO viaje
-        (id_viaje, fecha_asignacion, hora_inicio, hora_fin, distancia_km, costo_total,
-         id_usuario_conductor, id_vehiculo, id_punto_partida, id_solicitud)
+    SELECT COUNT(1)
+    FROM VIAJE
+    WHERE ID_USUARIO_CONDUCTOR = :idConductor
+      AND HORA_FIN IS NULL
+    """, nativeQuery = true)
+int countViajesAbiertosDeConductor(@Param("idConductor") Long idConductor);
+
+  @Modifying @Transactional
+  @Query(value = """
+      INSERT INTO VIAJE
+        (ID_VIAJE, FECHA_ASIGNACION, HORA_INICIO, DISTANCIA_KM, COSTO_TOTAL,
+         ID_USUARIO_CONDUCTOR, ID_VEHICULO, ID_PUNTO_PARTIDA, ID_SOLICITUD)
       VALUES
         (:idViaje,
          TO_DATE(:fechaAsignacion,'YYYY-MM-DD'),
-         CASE WHEN :horaInicio IS NULL THEN NULL ELSE TO_TIMESTAMP(:horaInicio,'YYYY-MM-DD HH24:MI:SS') END,
-         CASE WHEN :horaFin    IS NULL THEN NULL ELSE TO_TIMESTAMP(:horaFin,   'YYYY-MM-DD HH24:MI:SS') END,
+         TO_DATE(:horaInicio,'YYYY-MM-DD HH24:MI:SS'),
          :distanciaKm, :costoTotal,
-         :idUsuarioConductor, :idVehiculo, :idPuntoPartida, :idSolicitud)
+         :idConductor, :idVehiculo, :idPuntoPartida, :idSolicitud)
       """, nativeQuery = true)
-  void insertarViaje(@Param("idViaje") Long idViaje,
-                     @Param("fechaAsignacion") String fechaAsignacion,
-                     @Param("horaInicio") String horaInicio,
-                     @Param("horaFin") String horaFin,
-                     @Param("distanciaKm") Double distanciaKm,
-                     @Param("costoTotal") Double costoTotal,
-                     @Param("idUsuarioConductor") Long idUsuarioConductor,
-                     @Param("idVehiculo") Long idVehiculo,
-                     @Param("idPuntoPartida") Long idPuntoPartida,
-                     @Param("idSolicitud") Long idSolicitud);
+  void insertarViajeInicio(@Param("idViaje") Long idViaje,
+                           @Param("fechaAsignacion") String fechaAsignacion,
+                           @Param("horaInicio") String horaInicio,
+                           @Param("distanciaKm") Double distanciaKm,
+                           @Param("costoTotal") Double costoTotal,
+                           @Param("idConductor") Long idConductor,
+                           @Param("idVehiculo") Long idVehiculo,
+                           @Param("idPuntoPartida") Long idPuntoPartida,
+                           @Param("idSolicitud") Long idSolicitud);
 
   @Modifying
   @Transactional

@@ -1,5 +1,7 @@
 package uniandes.edu.co.proyecto.repositorio;
 
+import java.util.Map;
+
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,33 +84,26 @@ public interface DisponibilidadRepository extends JpaRepository<Disponibilidad, 
    * @param tipo      'PASAJEROS'|'COMIDA'|'MERCANCIAS' (UPPER)
    * @param tsActual  timestamp actual como 'YYYY-MM-DD HH24:MI:SS'
    */
-  @Query(value = """
-      SELECT x.id_disponibilidad AS idDisponibilidad,
-             x.id_usuario_conductor AS idUsuarioConductor,
-             x.id_vehiculo AS idVehiculo
-        FROM (
-              SELECT d.id_disponibilidad,
-                     d.id_usuario_conductor,
-                     d.id_vehiculo
-                FROM disponibilidad d
-                JOIN vehiculo v ON v.id_vehiculo = d.id_vehiculo
-               WHERE v.id_ciudad_expedicion = :idCiudad
-                 AND UPPER(d.dia) = :dia
-                 AND TO_DATE(:ts,'YYYY-MM-DD HH24:MI:SS') BETWEEN d.hora_inicio AND d.hora_fin
-                 AND UPPER(d.tipo_servicio) = :tipo
-                 AND NOT EXISTS (
-                       SELECT 1
-                         FROM viaje vv
-                        WHERE vv.id_usuario_conductor = d.id_usuario_conductor
-                          AND vv.hora_fin IS NULL
-                 )
-               ORDER BY d.id_disponibilidad
-             ) x
-       WHERE ROWNUM = 1
-       FOR UPDATE SKIP LOCKED
-      """, nativeQuery = true)
-  Candidato pickDisponibilidadParaAsignar(@Param("idCiudad") Long idCiudad,
-                                          @Param("dia") String dia,
-                                          @Param("tipo") String tipo,
-                                          @Param("ts") String tsActual);
+   @Query(value = """
+    SELECT d.id_disponibilidad AS ID_DISPONIBILIDAD,
+           d.id_usuario_conductor AS ID_USUARIO_CONDUCTOR,
+           d.id_vehiculo AS ID_VEHICULO
+    FROM disponibilidad d
+    WHERE UPPER(d.dia) = :dia
+      AND UPPER(d.tipo_servicio) = :tipo
+      AND TO_CHAR(SYSDATE,'HH24:MI:SS')
+          BETWEEN TO_CHAR(d.hora_inicio,'HH24:MI:SS') AND TO_CHAR(d.hora_fin,'HH24:MI:SS')
+      AND NOT EXISTS (
+        SELECT 1 FROM viaje v
+        WHERE v.id_usuario_conductor = d.id_usuario_conductor
+          AND v.hora_fin IS NULL
+      )
+    ORDER BY d.hora_fin
+    FETCH FIRST 1 ROWS ONLY
+    FOR UPDATE SKIP LOCKED
+    """, nativeQuery = true)
+    Map<String,Object> pickDisponibilidadParaAsignar(@Param("dia") String dia,
+                                                 @Param("tipo") String tipo);
+
+
 }
