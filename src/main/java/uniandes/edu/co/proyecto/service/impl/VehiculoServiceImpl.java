@@ -1,72 +1,51 @@
+// src/main/java/uniandes/edu/co/proyecto/service/impl/VehiculoServiceImpl.java
 package uniandes.edu.co.proyecto.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Locale;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import uniandes.edu.co.proyecto.modelo.*;
-import uniandes.edu.co.proyecto.repositorio.*;
+import uniandes.edu.co.proyecto.modelo.Vehiculo;
+import uniandes.edu.co.proyecto.repositorio.VehiculoRepository;
 import uniandes.edu.co.proyecto.service.VehiculoService;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class VehiculoServiceImpl implements VehiculoService {
 
-    @Autowired
-    private VehiculoRepository vehiculoRepository;
+  private final VehiculoRepository repo;
 
-    @Autowired
-    private UsuarioConductorRepository usuarioConductorRepository;
+  public VehiculoServiceImpl(VehiculoRepository repo) { this.repo = repo; }
 
-    @Autowired
-    private CiudadRepository ciudadRepository;
+  @Override
+  @Transactional
+  public Vehiculo registrar(Long idVehiculo, String tipo, String marca, String modelo, String color,
+                            String placa, Integer capacidad, Long idUsuarioConductor, Long idCiudadExpedicion) {
 
-    @Override
-    @Transactional
-    public Vehiculo registrarVehiculo(Vehiculo vehiculo) {
-        // Validaciones básicas
-        if (vehiculo.getId() == null || vehiculo.getPlaca() == null || vehiculo.getConductor() == null ||
-            vehiculo.getTipo() == null || vehiculo.getMarca() == null ||
-            vehiculo.getCiudadExpedicion() == null) {
-            throw new IllegalArgumentException("Todos los campos obligatorios deben estar completos");
-        }
+    if (idVehiculo == null || idVehiculo <= 0) throw new IllegalArgumentException("idVehiculo requerido y positivo");
+    if (capacidad == null || capacidad <= 0)   throw new IllegalArgumentException("capacidad debe ser > 0");
 
-        // Verificar que la placa no esté repetida
-        boolean existePlaca = vehiculoRepository.findAll().stream()
-                .anyMatch(v -> v.getPlaca().equalsIgnoreCase(vehiculo.getPlaca()));
-        if (existePlaca) {
-            throw new IllegalArgumentException("Ya existe un vehículo con la placa " + vehiculo.getPlaca());
-        }
-
-        // Verificar que el conductor existe
-        UsuarioConductor conductor = usuarioConductorRepository.findById(vehiculo.getConductor().getIdUsuarioConductor())
-                .orElseThrow(() -> new IllegalArgumentException("El conductor especificado no existe"));
-
-        // Verificar que la ciudad existe
-        Ciudad ciudad = ciudadRepository.findById(vehiculo.getCiudadExpedicion().getIdCiudad())
-                .orElseThrow(() -> new IllegalArgumentException("La ciudad de expedición no existe"));
-
-        // Asociar entidades gestionadas
-        vehiculo.setConductor(conductor);
-        vehiculo.setCiudadExpedicion(ciudad);
-
-        // Guardar el vehículo
-        return vehiculoRepository.save(vehiculo);
+    String t = (tipo == null ? "" : tipo.trim().toUpperCase(Locale.ROOT));
+    if (!(t.equals("CARRO") || t.equals("CAMIONETA") || t.equals("MOTOCICLETA"))) {
+      throw new IllegalArgumentException("tipo inválido (CARRO|CAMIONETA|MOTOCICLETA)");
     }
 
-    @Override
-    public List<Vehiculo> obtenerTodos() {
-        return vehiculoRepository.findAll();
-    }
+    String placaUp = (placa == null ? "" : placa.trim().toUpperCase(Locale.ROOT));
 
-    @Override
-    public Optional<Vehiculo> buscarPorId(Long id) {
-        return vehiculoRepository.findById(id);
-    }
+    if (repo.existsById(idVehiculo))                 throw new IllegalStateException("id_vehiculo ya existe");
+    if (repo.countByPlaca(placaUp) > 0)              throw new IllegalStateException("placa ya registrada");
+    if (repo.countConductor(idUsuarioConductor) == 0)throw new RuntimeException("Conductor no existe: " + idUsuarioConductor);
+    if (repo.countCiudad(idCiudadExpedicion) == 0)   throw new RuntimeException("Ciudad no existe: " + idCiudadExpedicion);
 
-    @Override
-    public void eliminarVehiculo(Long id) {
-        vehiculoRepository.deleteById(id);
-    }
+    repo.insertarVehiculo(idVehiculo, t,
+        marca == null ? "" : marca.trim(),
+        modelo == null ? "" : modelo.trim(),
+        color == null ? "" : color.trim(),
+        placaUp, capacidad, idUsuarioConductor, idCiudadExpedicion);
+
+    return repo.findById(idVehiculo)
+        .orElseThrow(() -> new RuntimeException("No fue posible recuperar el vehículo insertado"));
+  }
+
+  @Override
+  public Optional<Vehiculo> obtener(Long idVehiculo) { return repo.findById(idVehiculo); }
 }
