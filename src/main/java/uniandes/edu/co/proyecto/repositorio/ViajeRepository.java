@@ -22,6 +22,12 @@ public interface ViajeRepository extends JpaRepository<Viaje, Long> {
   @Query(value = "SELECT COUNT(1) FROM punto_geografico WHERE id_punto = :id", nativeQuery = true)
   int countPunto(@Param("id") Long idPunto);
 
+  @Query(value = "SELECT id_solicitud FROM viaje WHERE id_viaje = :id", nativeQuery = true)
+    Long findSolicitudIdByViaje(@Param("id") Long idViaje);
+
+  @Query(value = "SELECT id_usuario_conductor FROM viaje WHERE id_viaje = :id", nativeQuery = true)
+    Long findConductorIdByViaje(@Param("id") Long idViaje);
+
   // NUEVO: verifica si la solicitud ya tiene viaje
   @Query(value = "SELECT COUNT(1) FROM viaje WHERE id_solicitud = :id", nativeQuery = true)
   int countViajePorSolicitud(@Param("id") Long idSolicitud);
