@@ -17,6 +17,12 @@ public interface SolicitudServicioRepository extends JpaRepository<SolicitudServ
   @Query(value = "SELECT COUNT(1) FROM punto_geografico WHERE id_punto = :id", nativeQuery = true)
   int countPuntoGeografico(@Param("id") Long idPunto);
 
+  @Query(value = "SELECT estado FROM solicitud_servicio WHERE id_solicitud = :id", nativeQuery = true)
+    String findEstadoById(@Param("id") Long idSolicitud);
+
+  @Query(value = "SELECT id_usuario_servicio FROM solicitud_servicio WHERE id_solicitud = :id", nativeQuery = true)
+    Long findUsuarioServicioIdBySolicitud(@Param("id") Long idSolicitud);
+
   /* Inserción nativa (usa formato de fecha YYYY-MM-DD) */
   @Modifying
   @Transactional
