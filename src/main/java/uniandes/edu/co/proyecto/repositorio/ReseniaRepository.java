@@ -18,6 +18,9 @@ public interface ReseniaRepository extends JpaRepository<Resenia, Long> {
   @Query(value = "SELECT COUNT(1) FROM resenia WHERE id_viaje = :idViaje AND UPPER(autor_rol) = UPPER(:autorRol)", nativeQuery = true)
   int countPorViajeYRol(@Param("idViaje") Long idViaje, @Param("autorRol") String autorRol);
 
+  @Query(value = "SELECT COUNT(1) FROM resenia WHERE id_viaje = :idViaje AND autor_rol = :rol", nativeQuery = true)
+    int countByViajeAndRol(@Param("idViaje") Long idViaje, @Param("rol") String rol);
+
   @Modifying
   @Transactional
   @Query(value = """

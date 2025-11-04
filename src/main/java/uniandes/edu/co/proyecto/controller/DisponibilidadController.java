@@ -1,74 +1,46 @@
 // src/main/java/uniandes/edu/co/proyecto/controller/DisponibilidadController.java
 package uniandes.edu.co.proyecto.controller;
 
+import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import uniandes.edu.co.proyecto.repositorio.DisponibilidadRepository;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import uniandes.edu.co.proyecto.service.DisponibilidadService;
 
 @RestController
 @RequestMapping("/disponibilidades")
 public class DisponibilidadController {
 
-  private final DisponibilidadRepository repo;
-  private static final DateTimeFormatter TS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+  private final DisponibilidadService service;
 
-  public DisponibilidadController(DisponibilidadRepository repo) {
-    this.repo = repo;
+  public DisponibilidadController(DisponibilidadService service) {
+    this.service = service;
   }
 
-  @PostMapping("/registrar")
-  public ResponseEntity<String> registrar(
+  // RF6: Modificar disponibilidad (día/horas/tipo)
+  @PostMapping("/modificar")
+  public ResponseEntity<?> modificar(
       @RequestParam Long idDisponibilidad,
-      @RequestParam String dia,
-      @RequestParam String horaInicio,
-      @RequestParam String horaFin,
-      @RequestParam String tipoServicio,          // PASAJEROS | COMIDA | MERCANCIAS/MERCANÍAS
-      @RequestParam Long idVehiculo,
-      @RequestParam Long idUsuarioConductor) {
-
-    if (repo.existsById(idDisponibilidad)) {
-      return ResponseEntity.status(409).body("id_disponibilidad ya existe");
-    }
-    if (repo.countVehiculo(idVehiculo) == 0) {
-      return ResponseEntity.status(404).body("Vehiculo no existe: " + idVehiculo);
-    }
-    if (repo.countConductor(idUsuarioConductor) == 0) {
-      return ResponseEntity.status(404).body("UsuarioConductor no existe: " + idUsuarioConductor);
-    }
-
+      @RequestParam String dia,                  // LUNES..DOMINGO
+      @RequestParam String horaInicio,           // "YYYY-MM-DD HH:MM:SS"
+      @RequestParam String horaFin,              // "YYYY-MM-DD HH:MM:SS"
+      @RequestParam String tipoServicio          // PASAJEROS|COMIDA|MERCANCIAS|MERCANCÍAS
+  ) {
     try {
-      LocalDateTime ini = LocalDateTime.parse(horaInicio, TS);
-      LocalDateTime fin = LocalDateTime.parse(horaFin, TS);
-      if (!fin.isAfter(ini)) {
-        return ResponseEntity.badRequest().body("hora_fin debe ser > hora_inicio");
-      }
-    } catch (Exception e) {
-      return ResponseEntity.badRequest().body("Formato de hora inválido (use YYYY-MM-DD HH:MM:SS)");
+      var updated = service.modificar(idDisponibilidad, dia, horaInicio, horaFin, tipoServicio);
+      return ResponseEntity.ok(Map.of(
+        "idDisponibilidad", updated.get("idDisponibilidad"),
+        "dia", updated.get("dia"),
+        "horaInicio", updated.get("horaInicio"),
+        "horaFin", updated.get("horaFin"),
+        "tipoServicio", updated.get("tipoServicio")
+      ));
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.badRequest().body(e.getMessage());   // 400
+    } catch (IllegalStateException e) {
+      return ResponseEntity.status(409).body(e.getMessage());    // 409 (solape)
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(404).body(e.getMessage());    // 404 (no existe)
     }
-
-    String diaUp = dia.trim().toUpperCase();
-    String tipoUp = tipoServicio.trim().toUpperCase();
-
-    if (!(diaUp.equals("LUNES") || diaUp.equals("MARTES") || diaUp.equals("MIERCOLES") || diaUp.equals("MIÉRCOLES")
-        || diaUp.equals("JUEVES") || diaUp.equals("VIERNES") || diaUp.equals("SABADO") || diaUp.equals("SÁBADO")
-        || diaUp.equals("DOMINGO"))) {
-      return ResponseEntity.badRequest().body("dia inválido");
-    }
-
-    if (!(tipoUp.equals("PASAJEROS") || tipoUp.equals("COMIDA") || tipoUp.equals("MERCANCIAS") || tipoUp.equals("MERCANÍAS"))) {
-      return ResponseEntity.badRequest().body("tipo_servicio inválido");
-    }
-
-    int solapes = repo.contarSolape(diaUp, idVehiculo, idUsuarioConductor, horaInicio, horaFin);
-    if (solapes > 0) {
-      return ResponseEntity.status(409).body("Traslape para el mismo vehiculo o conductor en ese día");
-    }
-
-    repo.insertarDisponibilidad(idDisponibilidad, diaUp, horaInicio, horaFin, tipoUp, idVehiculo, idUsuarioConductor);
-    return ResponseEntity.ok("Disponibilidad registrada: " + idDisponibilidad);
   }
 }
