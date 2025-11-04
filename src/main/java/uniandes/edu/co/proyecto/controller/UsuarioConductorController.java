@@ -3,33 +3,29 @@ package uniandes.edu.co.proyecto.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import uniandes.edu.co.proyecto.modelo.UsuarioConductor;
-import uniandes.edu.co.proyecto.repositorio.UsuarioConductorRepository;
+import uniandes.edu.co.proyecto.service.UsuarioConductorService;
 
 @RestController
 public class UsuarioConductorController {
 
     @Autowired
-    private UsuarioConductorRepository usuarioConductorRepository;
+    private UsuarioConductorService usuarioConductorService;
 
     @PostMapping("/usuarios-conductor/new/save")
     public ResponseEntity<?> insertUsuarioConductor(@RequestBody UsuarioConductor conductor) {
         try {
-            usuarioConductorRepository.insertarUsuarioConductor(
-                conductor.getId(),
-                conductor.getNombre(),
-                conductor.getCorreo(),
-                conductor.getTelefono(),
-                conductor.getCedula(),
-                conductor.getComision()
-            );
-            return ResponseEntity.status(HttpStatus.CREATED).body("Usuario conductor registrado correctamente");
+            usuarioConductorService.registrarConductor(conductor);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body("Usuario conductor registrado correctamente");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error en los datos: " + e.getMessage());
         } catch (Exception e) {
-            return new ResponseEntity<>("Error al registrar el usuario conductor", HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al registrar el usuario conductor: " + e.getMessage());
         }
     }
 }
