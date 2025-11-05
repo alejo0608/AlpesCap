@@ -1,12 +1,13 @@
-// src/main/java/uniandes/edu/co/proyecto/service/DisponibilidadService.java
 package uniandes.edu.co.proyecto.service;
 
-import java.util.Map;
+import java.util.Optional;
+import uniandes.edu.co.proyecto.modelo.Disponibilidad;
 
 public interface DisponibilidadService {
-  Map<String, Object> modificar(Long idDisponibilidad,
-                                String dia,
-                                String horaInicio,
-                                String horaFin,
-                                String tipoServicio);
+  Disponibilidad registrar(Long idDisponibilidad,
+                           String dia, String horaInicioHHmmss, String horaFinHHmmss,
+                           String tipoServicio,
+                           Long idVehiculo, Long idUsuarioConductor);
+
+  Optional<Disponibilidad> obtener(Long idDisponibilidad);
 }
