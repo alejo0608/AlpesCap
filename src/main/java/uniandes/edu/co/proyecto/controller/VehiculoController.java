@@ -31,7 +31,7 @@ public class VehiculoController {
       var v = service.registrar(idVehiculo, tipo, marca, modelo, color, placa, capacidad,
                                 idUsuarioConductor, idCiudadExpedicion);
       return ResponseEntity.ok(Map.of(
-          "idVehiculo", v.getId(),
+          "idVehiculo", v.getIdVehiculo(),
           "placa", v.getPlaca(),
           "tipo", v.getTipo()
       ));

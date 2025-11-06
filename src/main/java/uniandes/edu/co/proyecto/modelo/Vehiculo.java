@@ -42,7 +42,7 @@ public class Vehiculo {
     }
 
     // getters/setters
-    public Long getId() {
+    public Long getIdVehiculo() {
         return id;
     }
 

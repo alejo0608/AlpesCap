@@ -106,21 +106,21 @@ public interface DisponibilidadRepository extends JpaRepository<Disponibilidad, 
                                     @Param("horaFin") String horaFin,
                                     @Param("idActual") Long idActual);
 
-  @Modifying
-  @Transactional
-  @Query(value = """
-      UPDATE disponibilidad
-         SET dia = :dia,
-             hora_inicio = TO_DATE(:horaInicio,'YYYY-MM-DD HH24:MI:SS'),
-             hora_fin    = TO_DATE(:horaFin,'YYYY-MM-DD HH24:MI:SS'),
-             tipo_servicio = :tipoServicio
-       WHERE id_disponibilidad = :id
-      """, nativeQuery = true)
-  int actualizarDisponibilidad(@Param("id") Long idDisponibilidad,
-                               @Param("dia") String dia,
-                               @Param("horaInicio") String horaInicio,
-                               @Param("horaFin") String horaFin,
-                               @Param("tipoServicio") String tipoServicio);
+  // ===== Update (modificar) =====
+@Modifying(clearAutomatically = true, flushAutomatically = true)
+@Query(value = """
+  UPDATE disponibilidad
+     SET dia = :dia,
+         hora_inicio = TO_DATE(:horaInicio,'YYYY-MM-DD HH24:MI:SS'),
+         hora_fin    = TO_DATE(:horaFin,'YYYY-MM-DD HH24:MI:SS'),
+         tipo_servicio = :tipoServicio
+   WHERE id_disponibilidad = :id
+  """, nativeQuery = true)
+int actualizarDisponibilidad(@Param("id") Long idDisponibilidad,
+                             @Param("dia") String dia,
+                             @Param("horaInicio") String horaInicio,
+                             @Param("horaFin") String horaFin,
+                             @Param("tipoServicio") String tipoServicio);
 
   // ===== Selección candidata (RF8) =====
   interface Candidato {
