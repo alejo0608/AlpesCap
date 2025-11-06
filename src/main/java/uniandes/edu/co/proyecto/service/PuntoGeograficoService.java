@@ -6,4 +6,8 @@ import uniandes.edu.co.proyecto.modelo.PuntoGeografico;
 public interface PuntoGeograficoService {
   PuntoGeografico registrar(Long idPunto, String nombre, Double latitud, Double longitud,
                             String direccion, Long idCiudad);
+
+  PuntoGeografico registrarAuto(String nombre, Double latitud, Double longitud,
+                            String direccion, Long idCiudad);
+
 }

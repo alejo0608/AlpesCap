@@ -19,4 +19,15 @@ public interface PuntoGeograficoRepository extends JpaRepository<PuntoGeografico
   int countByNombreDireccionCiudad(@Param("nombre") String nombre,
                                    @Param("direccion") String direccion,
                                    @Param("idCiudad") Long idCiudad);
+
+  @Query(value = """
+      SELECT COUNT(1)
+        FROM PUNTO_GEOGRAFICO
+       WHERE ID_CIUDAD = :idCiudad
+         AND LATITUD = :lat
+         AND LONGITUD = :lon
+      """, nativeQuery = true)
+  int countByCoordenadasCiudad(@Param("lat") Double lat,
+                               @Param("lon") Double lon,
+                               @Param("idCiudad") Long idCiudad);
 }
