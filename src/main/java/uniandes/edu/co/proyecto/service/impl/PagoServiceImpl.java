@@ -102,7 +102,7 @@ public class PagoServiceImpl implements PagoService {
     // Insert
     try {
       pagoRepo.insertarPagoConViaje(
-          idPago, idUsuarioServicio, metodo, idTarjetaFinal, idViaje, monto, st
+          idPago, metodo, idTarjetaFinal, idViaje, monto, st
       );
     } catch (DataIntegrityViolationException ex) {
       // Índices únicos / FKs

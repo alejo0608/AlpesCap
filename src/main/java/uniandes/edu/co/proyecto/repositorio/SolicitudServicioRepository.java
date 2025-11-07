@@ -24,19 +24,26 @@ public interface SolicitudServicioRepository extends JpaRepository<SolicitudServ
     Long findUsuarioServicioIdBySolicitud(@Param("id") Long idSolicitud);
 
   /* Inserción nativa (usa formato de fecha YYYY-MM-DD) */
-  @Modifying
-  @Transactional
+  @Modifying @Transactional
   @Query(value = """
-      INSERT INTO solicitud_servicio
-        (id_solicitud, tipo, nivel, fecha, estado, id_usuario_servicio, id_punto_partida)
-      VALUES
-        (:idSolicitud, :tipo, :nivel, TO_DATE(:fecha,'YYYY-MM-DD'), :estado, :idUsuarioServicio, :idPuntoPartida)
-      """, nativeQuery = true)
-  void insertarSolicitud(@Param("idSolicitud") Long idSolicitud,
-                         @Param("tipo") String tipo,
-                         @Param("nivel") String nivel,
-                         @Param("fecha") String fecha,           // "2025-09-01"
-                         @Param("estado") String estado,
-                         @Param("idUsuarioServicio") Long idUsuarioServicio,
-                         @Param("idPuntoPartida") Long idPuntoPartida);
+    INSERT INTO SOLICITUD_SERVICIO
+      (ID_SOLICITUD,
+       ID_USUARIO_SERVICIO, ID_PUNTO_PARTIDA, ID_PUNTO_LLEGADA,
+       TIPO, NIVEL,
+       FECHA, FECHA_SOLICITUD,
+       ESTADO)
+    VALUES
+      (:idSolicitud,
+       :idUsuarioServicio, :idPuntoPartida, :idPuntoLlegada,
+       :tipo, :nivel,
+       SYSDATE, SYSDATE,
+       'CREADA')
+  """, nativeQuery = true)
+  int insertarSolicitud(@Param("idSolicitud") Long idSolicitud,
+                        @Param("idUsuarioServicio") Long idUsuarioServicio,
+                        @Param("idPuntoPartida") Long idPuntoPartida,
+                        @Param("idPuntoLlegada") Long idPuntoLlegada,
+                        @Param("tipo") String tipo,
+                        @Param("nivel") String nivel);
+  
 }

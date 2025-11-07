@@ -101,7 +101,7 @@ public class TarjetaCreditoController {
         return ResponseEntity.status(409).body("Ya existe una tarjeta con ese número");
 
       // Insert
-      int rows = repo.insertarTarjeta(idTarjeta, digits, tit, mesVencimiento, anioVencimiento, cvv, idUsuarioServicio);
+      int rows = repo.insertarTarjeta(idTarjeta, idUsuarioServicio, digits, tit, mesVencimiento, anioVencimiento, cvv);
       if (rows == 0) return ResponseEntity.internalServerError().body("No fue posible insertar la tarjeta");
 
       // Respuesta

@@ -85,23 +85,22 @@ public interface ViajeRepository extends JpaRepository<Viaje, Long> {
   @Modifying(clearAutomatically = true, flushAutomatically = true)
   @Transactional
   @Query(value = """
-        INSERT INTO VIAJE
-          (ID_VIAJE, ID_USUARIO_SERVICIO, ID_USUARIO_CONDUCTOR, ID_VEHICULO,
-           ID_PUNTO_PARTIDA, ID_PUNTO_LLEGADA, HORA_INICIO, HORA_FIN,
-           DISTANCIA_KM, COSTO_TOTAL, TIPO_SERVICIO, NIVEL)
-        VALUES
-          (:idViaje, :idUsrServ, :idCond, :idVehiculo,
-           :idPartida, :idLlegada, SYSDATE, NULL,
-           :distKm, :costo, :tipo, :nivel)
-      """, nativeQuery = true)
-  void insertarViaje(@Param("idViaje") Long idViaje,
-      @Param("idUsrServ") Long idUsuarioServicio,
-      @Param("idCond") Long idUsuarioConductor,
-      @Param("idVehiculo") Long idVehiculo,
-      @Param("idPartida") Long idPuntoPartida,
-      @Param("idLlegada") Long idPuntoLlegada,
-      @Param("distKm") Double distanciaKm,
-      @Param("costo") Double costoTotal,
-      @Param("tipo") String tipoServicio,
-      @Param("nivel") String nivel);
+    INSERT INTO VIAJE
+      (ID_VIAJE, FECHA_ASIGNACION, HORA_INICIO, HORA_FIN,
+       DISTANCIA_KM, COSTO_TOTAL,
+       ID_USUARIO_CONDUCTOR, ID_VEHICULO,
+       ID_PUNTO_PARTIDA, ID_SOLICITUD)
+    VALUES
+      (:idViaje, SYSDATE, SYSDATE, NULL,
+       :distanciaKm, :costoTotal,
+       :idConductor, :idVehiculo,
+       :idPuntoPartida, :idSolicitud)
+  """, nativeQuery = true)
+  int insertarViaje(@Param("idViaje") Long idViaje,
+                    @Param("idConductor") Long idConductor,
+                    @Param("idVehiculo") Long idVehiculo,
+                    @Param("idPuntoPartida") Long idPuntoPartida,
+                    @Param("idSolicitud") Long idSolicitud,
+                    @Param("distanciaKm") Double distanciaKm,
+                    @Param("costoTotal") Double costoTotal);
 }

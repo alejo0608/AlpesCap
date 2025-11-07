@@ -17,6 +17,7 @@ import uniandes.edu.co.proyecto.modelo.PuntoGeografico;
 import uniandes.edu.co.proyecto.repositorio.DisponibilidadRepository;
 import uniandes.edu.co.proyecto.repositorio.PagoRepository;
 import uniandes.edu.co.proyecto.repositorio.PuntoGeograficoRepository;
+import uniandes.edu.co.proyecto.repositorio.SolicitudServicioRepository;
 import uniandes.edu.co.proyecto.repositorio.TarjetaCreditoRepository;
 import uniandes.edu.co.proyecto.repositorio.ViajeRepository;
 import uniandes.edu.co.proyecto.service.SolicitudServicioService;
@@ -42,6 +43,7 @@ public class SolicitudServicioServiceImpl implements SolicitudServicioService {
   private final DisponibilidadRepository dispRepo;
   private final ViajeRepository viajeRepo;
   private final PagoRepository pagoRepo;
+  private final SolicitudServicioRepository solRepo;
 
   // Zona horaria operativa
   private static final ZoneId BOG = ZoneId.of("America/Bogota");
@@ -58,13 +60,15 @@ public class SolicitudServicioServiceImpl implements SolicitudServicioService {
       PuntoGeograficoRepository puntoRepo,
       DisponibilidadRepository dispRepo,
       ViajeRepository viajeRepo,
-      PagoRepository pagoRepo
+      PagoRepository pagoRepo,
+      SolicitudServicioRepository solRepo
   ) {
     this.tarjetaRepo = tarjetaRepo;
     this.puntoRepo   = puntoRepo;
     this.dispRepo    = dispRepo;
     this.viajeRepo   = viajeRepo;
     this.pagoRepo    = pagoRepo;
+    this.solRepo     = solRepo;
   }
 
   // ================= Helpers reutilizables =================
@@ -203,23 +207,42 @@ public class SolicitudServicioServiceImpl implements SolicitudServicioService {
     // 4) Distancia y costo
     double distKm = haversineKm(p1.getLatitud(), p1.getLongitud(), p2.getLatitud(), p2.getLongitud());
     double costo  = calcularTarifa(tipo, nivel, distKm);
-
-    // 5) VIAJE (insert primero para respetar FK de PAGO)
-    Long idViaje = (req.idViaje() != null && req.idViaje() > 0) ? req.idViaje() : nextId(SEQ_VIAJE, nowId() + 1);
+    // 3) SOLICITUD
+    Long idSolicitud = nextId("SOLICITUD_SEQ", nowId()+2);
+    solRepo.insertarSolicitud(idSolicitud, idUsrServ, idPartida, idLlegada, tipo, nivel);
+    
+    // 4) VIAJE (FK a SOLICITUD)
+    Long idViaje = (req.idViaje()!=null && req.idViaje()>0) ? req.idViaje() : nextId(SEQ_VIAJE, nowId()+1);
     try {
-      viajeRepo.insertarViaje(idViaje, idUsrServ, idConductor, idVehiculo,
-                              idPartida, idLlegada, distKm, costo, tipo, nivel);
+      viajeRepo.insertarViaje(idViaje, idConductor, idVehiculo, idPartida, idSolicitud, distKm, costo);
     } catch (DataIntegrityViolationException e) {
       throw new IllegalStateException("No fue posible iniciar el viaje (duplicado o restricción BD)");
     }
-
-    // 6) PAGO (insert después, con FK a VIAJE)
-    Long idPago = (req.idPago() != null && req.idPago() > 0) ? req.idPago() : nextId(SEQ_PAGO, nowId());
-    try {
-      pagoRepo.insertarPagoConViaje(idPago, idUsrServ, metodo, idTarjeta, idViaje, costo, "APROBADO");
-    } catch (DataIntegrityViolationException e) {
-      // Si falla, la transacción hace rollback también del VIAJE
-      throw new IllegalStateException("No fue posible registrar el pago (duplicado o restricción BD)");
+    
+    // 6) PAGO idempotente (si ya existe para este viaje, lo reusamos)
+    Long idPagoExistente = null;
+    if (pagoRepo.countByViaje(idViaje) > 0) {
+      idPagoExistente = pagoRepo.findIdByViaje(idViaje);
+    }
+    
+    // Si ya hay pago, devolvemos ese id; si no, insertamos uno nuevo
+    Long idPago;
+    if (idPagoExistente != null) {
+      idPago = idPagoExistente;
+    } else {
+      idPago = /* usa tu generador actual, idealmente secuencia PAGO_SEQ */ 
+               ((req.idPago() != null && req.idPago() > 0) ? req.idPago() : /* next from PAGO_SEQ */ nextId(SEQ_PAGO, nowId()+3));
+      try {
+        pagoRepo.insertarPagoConViaje(idPago, metodo, idTarjeta, idViaje, costo, "COMPLETADO");
+      } catch (org.springframework.dao.DataIntegrityViolationException e) {
+        // Si fue carrera de inserción (doble clic), verificamos si ya quedó creado
+        Long ya = pagoRepo.findIdByViaje(idViaje);
+        if (ya != null) {
+          idPago = ya; // idempotente: devolvemos el existente
+        } else {
+          throw new IllegalStateException("No fue posible registrar el pago (duplicado o restricción BD)");
+        }
+      }
     }
 
     // 7) Respuesta

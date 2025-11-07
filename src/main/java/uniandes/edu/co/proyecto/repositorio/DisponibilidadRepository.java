@@ -150,27 +150,52 @@ int actualizarDisponibilidad(@Param("id") Long idDisponibilidad,
   Map<String,Object> pickDisponibilidadParaAsignar(@Param("dia") String dia,
                                                    @Param("tipo") String tipo);
 
+// Selecciona 1 disponibilidad candidata (la de menor hora_fin) en la ciudad/tipo/día,
+// evitando conductores con viaje abierto. Bloquea la fila elegida.
 @Query(value = """
-  SELECT d.id_disponibilidad   AS ID_DISPONIBILIDAD,
-         d.id_usuario_conductor AS ID_USUARIO_CONDUCTOR,
-         d.id_vehiculo          AS ID_VEHICULO
+  SELECT d.id_disponibilidad     AS ID_DISPONIBILIDAD,
+         d.id_usuario_conductor  AS ID_USUARIO_CONDUCTOR,
+         d.id_vehiculo           AS ID_VEHICULO
     FROM disponibilidad d
-    JOIN vehiculo v ON v.id_vehiculo = d.id_vehiculo
-   WHERE v.id_ciudad_expedicion = :idCiudad
-     AND UPPER(d.dia) = :dia
+   WHERE UPPER(d.dia) = :dia
      AND UPPER(d.tipo_servicio) = :tipo
-     AND TO_CHAR(SYSDATE,'HH24:MI:SS')
-         BETWEEN TO_CHAR(d.hora_inicio,'HH24:MI:SS') AND TO_CHAR(d.hora_fin,'HH24:MI:SS')
+     AND SYSDATE BETWEEN d.hora_inicio AND d.hora_fin
+     AND EXISTS (
+           SELECT 1
+             FROM vehiculo v
+            WHERE v.id_vehiculo = d.id_vehiculo
+              AND v.id_ciudad_expedicion = :idCiudad
+         )
      AND NOT EXISTS (
-         SELECT 1 FROM viaje vi
-          WHERE vi.id_usuario_conductor = d.id_usuario_conductor
-            AND vi.hora_fin IS NULL
-     )
-   ORDER BY d.hora_fin
-   FETCH FIRST 1 ROWS ONLY
+           SELECT 1
+             FROM viaje vi
+            WHERE vi.id_usuario_conductor = d.id_usuario_conductor
+              AND vi.hora_fin IS NULL
+         )
+     AND d.hora_fin = (
+           SELECT MIN(d2.hora_fin)
+             FROM disponibilidad d2
+            WHERE UPPER(d2.dia) = :dia
+              AND UPPER(d2.tipo_servicio) = :tipo
+              AND SYSDATE BETWEEN d2.hora_inicio AND d2.hora_fin
+              AND EXISTS (
+                    SELECT 1
+                      FROM vehiculo v2
+                     WHERE v2.id_vehiculo = d2.id_vehiculo
+                       AND v2.id_ciudad_expedicion = :idCiudad
+                  )
+              AND NOT EXISTS (
+                    SELECT 1
+                      FROM viaje vi2
+                     WHERE vi2.id_usuario_conductor = d2.id_usuario_conductor
+                       AND vi2.hora_fin IS NULL
+                  )
+         )
+     AND ROWNUM = 1
    FOR UPDATE SKIP LOCKED
   """, nativeQuery = true)
-java.util.Map<String,Object> pickEnCiudad(@Param("idCiudad") Long idCiudad,
-                                          @Param("dia") String dia,
-                                          @Param("tipo") String tipo);
+Map<String,Object> pickEnCiudad(@Param("idCiudad") Long idCiudad,
+                                @Param("dia") String dia,
+                                @Param("tipo") String tipo);
+
 }
