@@ -14,28 +14,29 @@ public interface PagoRepository extends JpaRepository<Pago, Long> {
   // ¿Ya existe pago para un viaje? (1:1 con VIAJE)
   boolean existsByViaje_IdViaje(Long idViaje);
 
+  Optional<Pago> findByViaje_IdViaje(Long idViaje);
+
+  @Modifying(clearAutomatically = true, flushAutomatically = true)
+  @Transactional
+  @Query(value = """
+    INSERT INTO PAGO
+      (ID_PAGO, ID_USUARIO_SERVICIO, METODO, ID_TARJETA, ID_VIAJE, VALOR, FECHA, ESTADO)
+    VALUES
+      (:idPago, :idUsrServ, :metodo, :idTarjeta, :idViaje, :valor, SYSDATE, :estado)
+  """, nativeQuery = true)
+  int insertarPagoConViaje(@Param("idPago") Long idPago,
+                           @Param("idUsrServ") Long idUsuarioServicio,
+                           @Param("metodo") String metodo,
+                           @Param("idTarjeta") Long idTarjeta,   // puede ser NULL
+                           @Param("idViaje") Long idViaje,
+                           @Param("valor") Double valor,
+                           @Param("estado") String estado);
+
   @Query(value = "SELECT COUNT(1) FROM PAGO WHERE ID_VIAJE = :id", nativeQuery = true)
   int countByViaje(@Param("id") Long idViaje);
 
-  Optional<Pago> findByViaje_IdViaje(Long idViaje);
-
-  // Útil para RF9 si cambias estado del pago
-  @Modifying
+  @Modifying(clearAutomatically = true, flushAutomatically = true)
   @Transactional
-  @Query(value = "UPDATE PAGO SET ESTADO = :estado WHERE ID_PAGO = :idPago", nativeQuery = true)
-  int actualizarEstado(@Param("idPago") Long idPago, @Param("estado") String estado);
-
-  @Modifying @Transactional
-  @Query(value = """
-      INSERT INTO PAGO
-        (ID_PAGO, ID_VIAJE, MONTO, FECHA, ESTADO)
-      VALUES
-        (:idPago, :idViaje, :monto, TO_DATE(:fecha,'YYYY-MM-DD'), :estado)
-      """, nativeQuery = true)
-  void insertarPago(@Param("idPago") Long idPago,
-                    @Param("idViaje") Long idViaje,
-                    @Param("monto") Double monto,
-                    @Param("fecha") String fecha,
-                    @Param("estado") String estado);
-
+  @Query(value = "UPDATE PAGO SET ESTADO = :estado WHERE ID_PAGO = :id", nativeQuery = true)
+  int actualizarEstado(@Param("id") Long idPago, @Param("estado") String estado);
 }

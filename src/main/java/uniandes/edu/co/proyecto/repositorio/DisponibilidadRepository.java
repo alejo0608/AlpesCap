@@ -149,4 +149,28 @@ int actualizarDisponibilidad(@Param("id") Long idDisponibilidad,
     """, nativeQuery = true)
   Map<String,Object> pickDisponibilidadParaAsignar(@Param("dia") String dia,
                                                    @Param("tipo") String tipo);
+
+@Query(value = """
+  SELECT d.id_disponibilidad   AS ID_DISPONIBILIDAD,
+         d.id_usuario_conductor AS ID_USUARIO_CONDUCTOR,
+         d.id_vehiculo          AS ID_VEHICULO
+    FROM disponibilidad d
+    JOIN vehiculo v ON v.id_vehiculo = d.id_vehiculo
+   WHERE v.id_ciudad_expedicion = :idCiudad
+     AND UPPER(d.dia) = :dia
+     AND UPPER(d.tipo_servicio) = :tipo
+     AND TO_CHAR(SYSDATE,'HH24:MI:SS')
+         BETWEEN TO_CHAR(d.hora_inicio,'HH24:MI:SS') AND TO_CHAR(d.hora_fin,'HH24:MI:SS')
+     AND NOT EXISTS (
+         SELECT 1 FROM viaje vi
+          WHERE vi.id_usuario_conductor = d.id_usuario_conductor
+            AND vi.hora_fin IS NULL
+     )
+   ORDER BY d.hora_fin
+   FETCH FIRST 1 ROWS ONLY
+   FOR UPDATE SKIP LOCKED
+  """, nativeQuery = true)
+java.util.Map<String,Object> pickEnCiudad(@Param("idCiudad") Long idCiudad,
+                                          @Param("dia") String dia,
+                                          @Param("tipo") String tipo);
 }

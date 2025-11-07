@@ -1,9 +1,9 @@
-// src/main/java/uniandes/edu/co/proyecto/service/SolicitudDeServicioService.java
 package uniandes.edu.co.proyecto.service;
 
-import uniandes.edu.co.proyecto.web.SolicitarServicioRequest;
-import uniandes.edu.co.proyecto.web.SolicitarServicioResponse;
+import java.util.Map;
+
+import uniandes.edu.co.proyecto.web.SolicitudServicioRequest;
 
 public interface SolicitudServicioService {
-  SolicitarServicioResponse solicitar(SolicitarServicioRequest req);
+  Map<String,Object> solicitar(SolicitudServicioRequest req);
 }

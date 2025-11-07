@@ -10,8 +10,6 @@ import uniandes.edu.co.proyecto.modelo.Viaje;
 
 public interface ViajeRepository extends JpaRepository<Viaje, Long> {
 
-
-
   @Query(value = "SELECT COUNT(1) FROM solicitud_servicio WHERE id_solicitud = :id", nativeQuery = true)
   int countSolicitud(@Param("id") Long idSolicitud);
 
@@ -25,24 +23,25 @@ public interface ViajeRepository extends JpaRepository<Viaje, Long> {
   int countPunto(@Param("id") Long idPunto);
 
   @Query(value = "SELECT id_solicitud FROM viaje WHERE id_viaje = :id", nativeQuery = true)
-    Long findSolicitudIdByViaje(@Param("id") Long idViaje);
+  Long findSolicitudIdByViaje(@Param("id") Long idViaje);
 
   @Query(value = "SELECT id_usuario_conductor FROM viaje WHERE id_viaje = :id", nativeQuery = true)
-    Long findConductorIdByViaje(@Param("id") Long idViaje);
+  Long findConductorIdByViaje(@Param("id") Long idViaje);
 
   // NUEVO: verifica si la solicitud ya tiene viaje
   @Query(value = "SELECT COUNT(1) FROM viaje WHERE id_solicitud = :id", nativeQuery = true)
   int countViajePorSolicitud(@Param("id") Long idSolicitud);
 
   @Query(value = """
-    SELECT COUNT(1)
-    FROM VIAJE
-    WHERE ID_USUARIO_CONDUCTOR = :idConductor
-      AND HORA_FIN IS NULL
-    """, nativeQuery = true)
-int countViajesAbiertosDeConductor(@Param("idConductor") Long idConductor);
+      SELECT COUNT(1)
+      FROM VIAJE
+      WHERE ID_USUARIO_CONDUCTOR = :idConductor
+        AND HORA_FIN IS NULL
+      """, nativeQuery = true)
+  int countViajesAbiertosDeConductor(@Param("idConductor") Long idConductor);
 
-  @Modifying @Transactional
+  @Modifying
+  @Transactional
   @Query(value = """
       INSERT INTO VIAJE
         (ID_VIAJE, FECHA_ASIGNACION, HORA_INICIO, DISTANCIA_KM, COSTO_TOTAL,
@@ -55,14 +54,14 @@ int countViajesAbiertosDeConductor(@Param("idConductor") Long idConductor);
          :idConductor, :idVehiculo, :idPuntoPartida, :idSolicitud)
       """, nativeQuery = true)
   void insertarViajeInicio(@Param("idViaje") Long idViaje,
-                           @Param("fechaAsignacion") String fechaAsignacion,
-                           @Param("horaInicio") String horaInicio,
-                           @Param("distanciaKm") Double distanciaKm,
-                           @Param("costoTotal") Double costoTotal,
-                           @Param("idConductor") Long idConductor,
-                           @Param("idVehiculo") Long idVehiculo,
-                           @Param("idPuntoPartida") Long idPuntoPartida,
-                           @Param("idSolicitud") Long idSolicitud);
+      @Param("fechaAsignacion") String fechaAsignacion,
+      @Param("horaInicio") String horaInicio,
+      @Param("distanciaKm") Double distanciaKm,
+      @Param("costoTotal") Double costoTotal,
+      @Param("idConductor") Long idConductor,
+      @Param("idVehiculo") Long idVehiculo,
+      @Param("idPuntoPartida") Long idPuntoPartida,
+      @Param("idSolicitud") Long idSolicitud);
 
   @Modifying
   @Transactional
@@ -77,8 +76,32 @@ int countViajesAbiertosDeConductor(@Param("idConductor") Long idConductor);
        WHERE id_viaje = :idViaje
       """, nativeQuery = true)
   int actualizarFinal(@Param("idViaje") Long idViaje,
-                      @Param("horaInicio") String horaInicio,
-                      @Param("horaFin") String horaFin,
-                      @Param("distanciaKm") Double distanciaKm,
-                      @Param("costoTotal") Double costoTotal);
+      @Param("horaInicio") String horaInicio,
+      @Param("horaFin") String horaFin,
+      @Param("distanciaKm") Double distanciaKm,
+      @Param("costoTotal") Double costoTotal);
+
+  //
+  @Modifying(clearAutomatically = true, flushAutomatically = true)
+  @Transactional
+  @Query(value = """
+        INSERT INTO VIAJE
+          (ID_VIAJE, ID_USUARIO_SERVICIO, ID_USUARIO_CONDUCTOR, ID_VEHICULO,
+           ID_PUNTO_PARTIDA, ID_PUNTO_LLEGADA, HORA_INICIO, HORA_FIN,
+           DISTANCIA_KM, COSTO_TOTAL, TIPO_SERVICIO, NIVEL)
+        VALUES
+          (:idViaje, :idUsrServ, :idCond, :idVehiculo,
+           :idPartida, :idLlegada, SYSDATE, NULL,
+           :distKm, :costo, :tipo, :nivel)
+      """, nativeQuery = true)
+  void insertarViaje(@Param("idViaje") Long idViaje,
+      @Param("idUsrServ") Long idUsuarioServicio,
+      @Param("idCond") Long idUsuarioConductor,
+      @Param("idVehiculo") Long idVehiculo,
+      @Param("idPartida") Long idPuntoPartida,
+      @Param("idLlegada") Long idPuntoLlegada,
+      @Param("distKm") Double distanciaKm,
+      @Param("costo") Double costoTotal,
+      @Param("tipo") String tipoServicio,
+      @Param("nivel") String nivel);
 }
