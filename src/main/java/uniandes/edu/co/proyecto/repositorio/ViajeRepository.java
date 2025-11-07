@@ -103,4 +103,25 @@ public interface ViajeRepository extends JpaRepository<Viaje, Long> {
                     @Param("idSolicitud") Long idSolicitud,
                     @Param("distanciaKm") Double distanciaKm,
                     @Param("costoTotal") Double costoTotal);
+
+  // Nuevo método para finalizar viaje
+  @Query(value = "SELECT COUNT(1) FROM VIAJE WHERE ID_VIAJE = :id AND HORA_FIN IS NULL", nativeQuery = true)
+  int countAbierto(@Param("id") Long idViaje);
+
+  @Modifying
+  @Transactional
+  @Query(value = """
+      UPDATE VIAJE
+         SET HORA_FIN     = SYSDATE,
+             DISTANCIA_KM = NVL(:distanciaKm, DISTANCIA_KM),
+             COSTO_TOTAL  = NVL(:costoTotal,  COSTO_TOTAL)
+       WHERE ID_VIAJE = :idViaje
+         AND HORA_FIN IS NULL
+      """, nativeQuery = true)
+  int cerrarViaje(@Param("idViaje") Long idViaje,
+                  @Param("distanciaKm") Double distanciaKm,
+                  @Param("costoTotal")  Double costoTotal);
+
+  @Query(value = "SELECT ID_USUARIO_CONDUCTOR FROM VIAJE WHERE ID_VIAJE = :id", nativeQuery = true)
+  Long findConductorByViaje(@Param("id") Long idViaje);
 }

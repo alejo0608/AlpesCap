@@ -43,4 +43,16 @@ Long findIdByViaje(@Param("idViaje") Long idViaje);
   @Transactional
   @Query(value = "UPDATE PAGO SET ESTADO = :estado WHERE ID_PAGO = :id", nativeQuery = true)
   int actualizarEstado(@Param("id") Long idPago, @Param("estado") String estado);
+
+// 
+@Modifying
+@Transactional
+@Query(value = """
+    UPDATE PAGO
+       SET ESTADO = 'COMPLETADO'
+     WHERE ID_VIAJE = :idViaje
+       AND UPPER(ESTADO) IN ('EN ESPERA','APROBADO')
+    """, nativeQuery = true)
+int completarPagoPorViaje(@Param("idViaje") Long idViaje);
 }
+
