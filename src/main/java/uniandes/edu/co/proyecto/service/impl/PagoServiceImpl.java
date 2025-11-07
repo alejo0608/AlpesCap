@@ -65,8 +65,8 @@ public class PagoServiceImpl implements PagoService {
     if (pagoRepo.countByViaje(idViaje) > 0) {
       throw new IllegalStateException("El viaje ya tiene un pago asociado"); // 409 (UQ_PAGO_VIAJE)
     }
-
-    pagoRepo.insertarPago(idPago, idViaje, monto, f, st);
+    String metodo = "TARJETA";
+    pagoRepo.insertarPago(idPago, idViaje, monto, f, st, metodo);
 
     return pagoRepo.findById(idPago)
         .orElseThrow(() -> new RuntimeException("No fue posible recuperar el pago insertado"));

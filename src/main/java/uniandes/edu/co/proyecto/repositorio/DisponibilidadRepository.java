@@ -130,23 +130,31 @@ int actualizarDisponibilidad(@Param("id") Long idDisponibilidad,
   }
 
   @Query(value = """
-    SELECT d.id_disponibilidad AS ID_DISPONIBILIDAD,
-           d.id_usuario_conductor AS ID_USUARIO_CONDUCTOR,
-           d.id_vehiculo AS ID_VEHICULO
-    FROM disponibilidad d
-    WHERE UPPER(d.dia) = :dia
-      AND UPPER(d.tipo_servicio) = :tipo
+SELECT d.id_disponibilidad   AS ID_DISPONIBILIDAD,
+       d.id_usuario_conductor AS ID_USUARIO_CONDUCTOR,
+       d.id_vehiculo          AS ID_VEHICULO
+FROM disponibilidad d
+WHERE d.id_disponibilidad = (
+  SELECT id_disponibilidad
+  FROM (
+    SELECT d2.id_disponibilidad
+    FROM disponibilidad d2
+    WHERE UPPER(d2.dia) = :dia
+      AND UPPER(d2.tipo_servicio) = :tipo
       AND TO_CHAR(SYSDATE,'HH24:MI:SS')
-          BETWEEN TO_CHAR(d.hora_inicio,'HH24:MI:SS') AND TO_CHAR(d.hora_fin,'HH24:MI:SS')
+          BETWEEN TO_CHAR(d2.hora_inicio,'HH24:MI:SS')
+              AND TO_CHAR(d2.hora_fin,'HH24:MI:SS')
       AND NOT EXISTS (
         SELECT 1 FROM viaje v
-        WHERE v.id_usuario_conductor = d.id_usuario_conductor
+        WHERE v.id_usuario_conductor = d2.id_usuario_conductor
           AND v.hora_fin IS NULL
       )
-    ORDER BY d.hora_fin
-    FETCH FIRST 1 ROWS ONLY
-    FOR UPDATE SKIP LOCKED
-    """, nativeQuery = true)
-  Map<String,Object> pickDisponibilidadParaAsignar(@Param("dia") String dia,
-                                                   @Param("tipo") String tipo);
+    ORDER BY d2.hora_fin
+  )
+  WHERE ROWNUM = 1
+)
+FOR UPDATE SKIP LOCKED
+""", nativeQuery = true)
+Map<String,Object> pickDisponibilidadParaAsignar(@Param("dia") String dia,
+                                                 @Param("tipo") String tipo);
 }

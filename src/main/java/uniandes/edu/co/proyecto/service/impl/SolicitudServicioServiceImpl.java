@@ -161,7 +161,9 @@ public class SolicitudServicioServiceImpl implements SolicitudServicioService {
     if (req.idPago() != null) {
       if (pagoRepo.existsById(req.idPago()))
         throw new IllegalStateException("idPago ya existe");
-      pagoRepo.insertarPago(req.idPago(), req.idViaje(), costo, hoy.toString(), "EN ESPERA");
+      // Asumiendo que el método de pago es "TARJETA" por defecto, cámbialo si tienes otra lógica
+      String metodo = "TARJETA";
+      pagoRepo.insertarPago(req.idPago(), req.idViaje(), costo, hoy.toString(), "EN ESPERA", metodo);
     }
 
     double kmOut = Math.round(km * 100.0) / 100.0;

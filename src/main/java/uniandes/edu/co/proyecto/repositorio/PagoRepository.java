@@ -28,14 +28,15 @@ public interface PagoRepository extends JpaRepository<Pago, Long> {
   @Modifying @Transactional
   @Query(value = """
       INSERT INTO PAGO
-        (ID_PAGO, ID_VIAJE, MONTO, FECHA, ESTADO)
+        (ID_PAGO, ID_VIAJE, MONTO, FECHA, ESTADO, METODO)
       VALUES
-        (:idPago, :idViaje, :monto, TO_DATE(:fecha,'YYYY-MM-DD'), :estado)
+        (:idPago, :idViaje, :monto, TO_DATE(:fecha,'YYYY-MM-DD'), :estado, :metodo)
       """, nativeQuery = true)
   void insertarPago(@Param("idPago") Long idPago,
                     @Param("idViaje") Long idViaje,
                     @Param("monto") Double monto,
                     @Param("fecha") String fecha,
-                    @Param("estado") String estado);
+                    @Param("estado") String estado,
+                    @Param("metodo") String metodo);
 
 }
