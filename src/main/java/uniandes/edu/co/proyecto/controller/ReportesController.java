@@ -4,8 +4,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import uniandes.edu.co.proyecto.repositorio.ReportesRepository;
-import uniandes.edu.co.proyecto.repositorio.ReportesRepository.*;
+
 import uniandes.edu.co.proyecto.service.ReportesService;
 
 import java.util.List;
@@ -16,11 +15,10 @@ import java.util.Map;
 public class ReportesController {
 
   private final ReportesService service;
-  private final ReportesRepository repo;
 
-  public ReportesController(ReportesService service, ReportesRepository repo) {
+
+  public ReportesController(ReportesService service) {
     this.service = service;
-    this.repo = repo;
   }
 
   // ===== RFC1 "normal" (histórico simple) =====
