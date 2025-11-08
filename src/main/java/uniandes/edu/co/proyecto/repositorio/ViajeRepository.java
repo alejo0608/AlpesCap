@@ -108,6 +108,11 @@ public interface ViajeRepository extends JpaRepository<Viaje, Long> {
   @Query(value = "SELECT COUNT(1) FROM VIAJE WHERE ID_VIAJE = :id AND HORA_FIN IS NULL", nativeQuery = true)
   int countAbierto(@Param("id") Long idViaje);
 
+  // Nuevo método para verificar si el viaje ya está cerrado
+  @Query(value = "SELECT COUNT(1) FROM VIAJE WHERE ID_VIAJE = :id AND HORA_FIN IS NOT NULL", nativeQuery = true)
+  int countCerrado(@Param("id") Long idViaje);
+   
+
   @Modifying
   @Transactional
   @Query(value = """
