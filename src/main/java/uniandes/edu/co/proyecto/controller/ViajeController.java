@@ -1,15 +1,18 @@
 package uniandes.edu.co.proyecto.controller;
 
-import org.springframework.http.HttpStatus;
+
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import uniandes.edu.co.proyecto.repositorio.ViajeRepository;
 import uniandes.edu.co.proyecto.service.ViajeService;
+import uniandes.edu.co.proyecto.web.FinalizarViajeRequest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/viajes")
@@ -109,54 +112,28 @@ public class ViajeController {
   }
 
   // RF9: Finalizar viaje “nuevo” (servicio)
-  @PostMapping("/{idViaje}/finalizar")
-  public ResponseEntity<?> finalizarRF9(@PathVariable Long idViaje,
-                                        @RequestParam Double distanciaKm) {
+  @PostMapping(
+      value = "/{idViaje}/finalizar",
+      consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> finalizar(
+      @PathVariable Long idViaje,
+      FinalizarViajeRequest body // @ModelAttribute implícito para x-www-form-urlencoded
+  ) {
     try {
-      viajeService.finalizarViaje(idViaje, distanciaKm);
-      return ResponseEntity.ok("Viaje finalizado: " + idViaje);
+      Map<String,Object> out = viajeService.finalizar(
+          idViaje,
+          body.distanciaKm(),   // o body.getDistanciaKm() si no es record
+          body.costoTotal()     // o body.getCostoTotal()
+      );
+      return ResponseEntity.ok(out);
     } catch (IllegalArgumentException e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+      return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
     } catch (IllegalStateException e) {
-      return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+      return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("Error interno al finalizar el viaje: " + e.getMessage());
+      return ResponseEntity.internalServerError().body(Map.of("error", "Error interno: " + e.getMessage()));
     }
-  }
-
-  // Legacy (si aún lo usa tu compa)
-  @Deprecated
-  @PostMapping("/finalizar")
-  public ResponseEntity<String> finalizarViajeLegacy(
-      @RequestParam Long   idViaje,
-      @RequestParam(required = false) String horaInicio,
-      @RequestParam String horaFin,
-      @RequestParam Double distanciaKm,
-      @RequestParam Double costoTotal) {
-
-    if (!repo.existsById(idViaje)) {
-      return ResponseEntity.status(404).body("Viaje no existe: " + idViaje);
-    }
-
-    try {
-      if (horaInicio != null && !horaInicio.isBlank())  LocalDateTime.parse(horaInicio, TS_FMT);
-      LocalDateTime fin = LocalDateTime.parse(horaFin, TS_FMT);
-      if (horaInicio != null && !horaInicio.isBlank()) {
-        LocalDateTime ini = LocalDateTime.parse(horaInicio, TS_FMT);
-        if (fin.isBefore(ini)) {
-          return ResponseEntity.badRequest().body("hora_fin no puede ser menor que hora_inicio");
-        }
-      }
-    } catch (Exception ex) {
-      return ResponseEntity.badRequest().body("Formato de hora inválido. Use YYYY-MM-DD HH:MM:SS");
-    }
-
-    int rows = repo.actualizarFinal(idViaje, emptyToNull(horaInicio), horaFin, distanciaKm, costoTotal);
-    if (rows == 0) {
-      return ResponseEntity.status(500).body("No se pudo actualizar el viaje");
-    }
-    return ResponseEntity.ok("Viaje finalizado (legacy): " + idViaje);
   }
 
   @GetMapping("/{idViaje}")
@@ -164,9 +141,5 @@ public class ViajeController {
     return repo.findById(idViaje)
         .<ResponseEntity<?>>map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.notFound().build());
-  }
-
-  private static String emptyToNull(String s) {
-    return (s == null || s.isBlank()) ? null : s;
   }
 }

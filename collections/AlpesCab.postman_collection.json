@@ -1,0 +1,1435 @@
+{
+	"info": {
+		"_postman_id": "6937835e-4caa-452b-b9d3-7aa9dc41d0fe",
+		"name": "AlpesCab",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32310423"
+	},
+	"item": [
+		{
+			"name": "RF1",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"nombre\":\"Probemos esto 3\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/ciudades/new/save",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ciudades",
+						"new",
+						"save"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/ciudades/new/save\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"nombre\":\"Bogota QA 01\"}'\n\ncurl \"http://localhost:8080/ciudades/por-nombre?nombre=Bogota QA 01\""
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar Ciudad por nombre",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/ciudades/por-nombre?nombre=probemos esto 3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ciudades",
+						"por-nombre"
+					],
+					"query": [
+						{
+							"key": "nombre",
+							"value": "probemos esto 3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ciudad Duplicada",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"nombre\":\"Bogota QA 01\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/ciudades/new/save",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ciudades",
+						"new",
+						"save"
+					]
+				},
+				"description": "Generated from cURL: curl -i -X POST \"http://localhost:8080/ciudades/new/save\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\"nombre\":\"Bogota QA 01\"}'\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Manejo de error 400 Ciudad",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"nombre\":\"\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/ciudades/new/save",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ciudades",
+						"new",
+						"save"
+					]
+				},
+				"description": "Generated from cURL: curl -i -X POST \"http://localhost:8080/ciudades/new/save\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\"nombre\":\"\"}'\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "RF2",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":11016,\r\n    \"nombre\":\"Perfil de Prueba 3\",\r\n    \"correo\":\"yosoyunaprueba3@example.com\",\r\n    \"telefono\":\"2001112233\",\r\n    \"cedula\":\"300000000\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/usuarios-servicio/new/save",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"usuarios-servicio",
+						"new",
+						"save"
+					]
+				},
+				"description": "Generated from cURL: curl -i -X POST \"http://localhost:8080/usuarios-servicio/new/save\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"id\":11011,\r\n    \"nombre\":\"Ana QA\",\r\n    \"correo\":\"ana.qa+11011@example.com\",\r\n    \"telefono\":\"3000001111\",\r\n    \"cedula\":\"CC-11011\"\r\n  }'\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Duplicar usuario",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":11012,\r\n    \"nombre\":\"Ana QA 2\",\r\n    \"correo\":\"ana.qa+11011@example.com\",\r\n    \"telefono\":\"3000001112\",\r\n    \"cedula\":\"CC-11012\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/usuarios-servicio/new/save",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"usuarios-servicio",
+						"new",
+						"save"
+					]
+				},
+				"description": "Generated from cURL: curl -i -X POST \"http://localhost:8080/usuarios-servicio/new/save\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"id\":11012,\r\n    \"nombre\":\"Ana QA 2\",\r\n    \"correo\":\"ana.qa+11011@example.com\",\r\n    \"telefono\":\"3000001112\",\r\n    \"cedula\":\"CC-11012\"\r\n  }'\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "RF3",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\":\"Conductor de prueba 3\",\r\n    \"correo\":\"yosoyunconductordeprueba3@example.com\",\r\n    \"telefono\":\"3100001002\",\r\n    \"cedula\":\"400000000\",\r\n    \"comision\":0.9\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/conductores/registrar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"conductores",
+						"registrar"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/conductores/registrar\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"nombre\":\"Carlos Conductor QA\",\r\n    \"correo\":\"carlos.qa@example.com\",\r\n    \"telefono\":\"3100001001\",\r\n    \"cedula\":\"CC-22011\",\r\n    \"comision\":0.2\r\n  }'\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Cedula conductor duplicada",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\":\"Otro\",\r\n    \"correo\":\"otro.qa@example.com\",\r\n    \"telefono\":\"3100001003\",\r\n    \"cedula\":\"CC-22011\",\r\n    \"comision\":0.2\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/conductores/registrar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"conductores",
+						"registrar"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/conductores/registrar\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"nombre\":\"Otro\",\r\n    \"correo\":\"otro.qa@example.com\",\r\n    \"telefono\":\"3100001003\",\r\n    \"cedula\":\"CC-22011\",\r\n    \"comision\":0.2\r\n  }'\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "RF4",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idVehiculo",
+							"value": "13014",
+							"type": "text"
+						},
+						{
+							"key": "tipo",
+							"value": "CARRO",
+							"type": "text"
+						},
+						{
+							"key": "marca",
+							"value": "Prueba",
+							"type": "text"
+						},
+						{
+							"key": "modelo",
+							"value": "2025",
+							"type": "text"
+						},
+						{
+							"key": "color",
+							"value": "Negro",
+							"type": "text"
+						},
+						{
+							"key": "placa",
+							"value": "ABC323",
+							"type": "text"
+						},
+						{
+							"key": "capacidad",
+							"value": "8",
+							"type": "text"
+						},
+						{
+							"key": "idUsuarioConductor",
+							"value": "162",
+							"type": "text"
+						},
+						{
+							"key": "idCiudadExpedicion",
+							"value": "23",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/vehiculos/registrar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"vehiculos",
+						"registrar"
+					]
+				},
+				"description": "Generated from cURL: curl -i -X POST \"http://localhost:8080/vehiculos/registrar\" \\\r\n  -H \"Content-Type: application/x-www-form-urlencoded\" \\\r\n  -d \"idVehiculo=13011&tipo=CARRO&marca=Kia&modelo=2023&color=Negro&placa=ABC311&capacidad=4&idUsuarioConductor=<<ID_CONDUCTOR>>&idCiudadExpedicion=<<ID_CIUDAD>>\""
+			},
+			"response": []
+		},
+		{
+			"name": "check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/vehiculos/ping",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"vehiculos",
+						"ping"
+					]
+				},
+				"description": "Generated from cURL: curl -i http://localhost:8080/vehiculos/ping"
+			},
+			"response": []
+		},
+		{
+			"name": "Placa duplicada",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idVehiculo",
+							"value": "13012",
+							"type": "text"
+						},
+						{
+							"key": "tipo",
+							"value": "CARRO",
+							"type": "text"
+						},
+						{
+							"key": "marca",
+							"value": "Kia",
+							"type": "text"
+						},
+						{
+							"key": "modelo",
+							"value": "2023",
+							"type": "text"
+						},
+						{
+							"key": "color",
+							"value": "Blanco",
+							"type": "text"
+						},
+						{
+							"key": "placa",
+							"value": "ABC311",
+							"type": "text"
+						},
+						{
+							"key": "capacidad",
+							"value": "4",
+							"type": "text"
+						},
+						{
+							"key": "nivel",
+							"value": "ESTANDAR",
+							"type": "text"
+						},
+						{
+							"key": "idUsuarioConductor",
+							"value": "102",
+							"type": "text"
+						},
+						{
+							"key": "idCiudadExpedicion",
+							"value": "19",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/vehiculos/registrar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"vehiculos",
+						"registrar"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/vehiculos/registrar\" \\\r\n  -H \"Content-Type: application/x-www-form-urlencoded\" \\\r\n  -d \"idVehiculo=13012&tipo=CARRO&marca=Kia&modelo=2023&color=Blanco&placa=ABC311&capacidad=4&nivel=ESTANDAR&idUsuarioConductor=<<ID_CONDUCTOR>>&idCiudadExpedicion=<<ID_CIUDAD>>\"\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Conductor Inexistente",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idVehiculo",
+							"value": "13013",
+							"type": "text"
+						},
+						{
+							"key": "tipo",
+							"value": "CARRO",
+							"type": "text"
+						},
+						{
+							"key": "marca",
+							"value": "Chevrolet",
+							"type": "text"
+						},
+						{
+							"key": "modelo",
+							"value": "2022",
+							"type": "text"
+						},
+						{
+							"key": "color",
+							"value": "Rojo",
+							"type": "text"
+						},
+						{
+							"key": "placa",
+							"value": "ABC313",
+							"type": "text"
+						},
+						{
+							"key": "capacidad",
+							"value": "4",
+							"type": "text"
+						},
+						{
+							"key": "nivel",
+							"value": "ESTANDAR",
+							"type": "text"
+						},
+						{
+							"key": "idUsuarioConductor",
+							"value": "999999",
+							"type": "text"
+						},
+						{
+							"key": "idCiudadExpedicion",
+							"value": "19",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/vehiculos/registrar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"vehiculos",
+						"registrar"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/vehiculos/registrar\" \\\r\n  -H \"Content-Type: application/x-www-form-urlencoded\" \\\r\n  -d \"idVehiculo=13013&tipo=CARRO&marca=Chevrolet&modelo=2022&color=Rojo&placa=ABC313&capacidad=4&nivel=ESTANDAR&idUsuarioConductor=999999&idCiudadExpedicion=<<ID_CIUDAD>>\"\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "RF5",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idDisponibilidad",
+							"value": "12017",
+							"type": "text"
+						},
+						{
+							"key": "dia",
+							"value": "SABADO",
+							"type": "text"
+						},
+						{
+							"key": "horaInicio",
+							"value": "12:00:00",
+							"type": "text"
+						},
+						{
+							"key": "horaFin",
+							"value": "23:00:00",
+							"type": "text"
+						},
+						{
+							"key": "tipoServicio",
+							"value": "PASAJEROS",
+							"type": "text"
+						},
+						{
+							"key": "idVehiculo",
+							"value": "13014",
+							"type": "text"
+						},
+						{
+							"key": "idUsuarioConductor",
+							"value": "162",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/disponibilidades/registrar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"disponibilidades",
+						"registrar"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/disponibilidades/registrar\" \\\r\n  -H \"Content-Type: application/x-www-form-urlencoded\" \\\r\n  -d \"idDisponibilidad=12011&dia=MIERCOLES&horaInicio=08:00:00&horaFin=23:00:00&tipoServicio=PASAJEROS&idVehiculo=13011&idUsuarioConductor=<<ID_CONDUCTOR>>\"\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Disponibilidades cruzadas",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idDisponibilidad",
+							"value": "12012",
+							"type": "text"
+						},
+						{
+							"key": "dia",
+							"value": "MIERCOLES",
+							"type": "text"
+						},
+						{
+							"key": "horaInicio",
+							"value": "22:00:00",
+							"type": "text"
+						},
+						{
+							"key": "horaFin",
+							"value": "23:30:00",
+							"type": "text"
+						},
+						{
+							"key": "tipoServicio",
+							"value": "PASAJEROS",
+							"type": "text"
+						},
+						{
+							"key": "idVehiculo",
+							"value": "13011",
+							"type": "text"
+						},
+						{
+							"key": "idUsuarioConductor",
+							"value": "102",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/disponibilidades/registrar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"disponibilidades",
+						"registrar"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/disponibilidades/registrar\" \\\r\n  -H \"Content-Type: application/x-www-form-urlencoded\" \\\r\n  -d \"idDisponibilidad=12012&dia=MIERCOLES&horaInicio=22:00:00&horaFin=23:30:00&tipoServicio=PASAJEROS&idVehiculo=13011&idUsuarioConductor=<<ID_CONDUCTOR>>\"\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "RF6",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "horaInicio",
+							"value": "12:00:00",
+							"type": "text"
+						},
+						{
+							"key": "horaFin",
+							"value": "22:00:00",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/disponibilidades/12017/modificar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"disponibilidades",
+						"12017",
+						"modificar"
+					]
+				},
+				"description": "Generated from cURL: curl -X PATCH \"http://localhost:8080/disponibilidades/12011/modificar\" \\\r\n  -H \"Content-Type: application/x-www-form-urlencoded\" \\\r\n  -d \"horaInicio=09:00:00&horaFin=22:00:00\"\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Ver disponibilidad",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/disponibilidades/12017",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"disponibilidades",
+						"12017"
+					]
+				},
+				"description": "Generated from cURL: curl -i http://localhost:8080/disponibilidades/12011\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Cruce de disponibilidades",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "horaInicio",
+							"value": "14:30:00",
+							"type": "text"
+						},
+						{
+							"key": "horaFin",
+							"value": "20:30:00",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/disponibilidades/12012/modificar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"disponibilidades",
+						"12012",
+						"modificar"
+					]
+				},
+				"description": "Generated from cURL: curl -i -X PATCH \"http://localhost:8080/disponibilidades/12011/modificar\" \\\r\n  -H \"Content-Type: application/x-www-form-urlencoded\" \\\r\n  -d \"horaInicio=21:30:00&horaFin=23:30:00\"\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "RF7",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"idPunto\":14002,\r\n    \"nombre\":\"Prueba 3\",\r\n    \"latitud\":7.601,\r\n    \"longitud\":-79.066,\r\n    \"direccion\":\"Cra 1 #18A-12\",\r\n    \"idCiudad\":21\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/puntos/new/save",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"puntos",
+						"new",
+						"save"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/puntos/new/save\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"idPunto\":14001,\r\n    \"nombre\":\"Uniandes\",\r\n    \"latitud\":4.601,\r\n    \"longitud\":-74.066,\r\n    \"direccion\":\"Cra 1 #18A-12\",\r\n    \"idCiudad\":19\r\n  }'\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "RF7 sin ID",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\":\"Prueba Ubi 2\",\r\n    \"latitud\":7.601,\r\n    \"longitud\":-79.066,\r\n    \"direccion\":\"Cra 5 #18A-12\",\r\n    \"idCiudad\":23\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/puntos/new/auto",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"puntos",
+						"new",
+						"auto"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/puntos/new/auto\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"nombre\":\"Uniandes\",\r\n    \"latitud\":4.601,\r\n    \"longitud\":-74.066,\r\n    \"direccion\":\"Cra 1 #18A-12\",\r\n    \"idCiudad\":19\r\n  }'\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Registrar Tarjeta con ID",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idTarjeta",
+							"value": "18006",
+							"type": "text"
+						},
+						{
+							"key": "numero",
+							"value": "4111-1111-1111-1112",
+							"type": "text"
+						},
+						{
+							"key": "titular",
+							"value": "Juan Perez",
+							"type": "text"
+						},
+						{
+							"key": "mesVencimiento",
+							"value": "12",
+							"type": "text"
+						},
+						{
+							"key": "anioVencimiento",
+							"value": "2030",
+							"type": "text"
+						},
+						{
+							"key": "cvv",
+							"value": "123",
+							"type": "text"
+						},
+						{
+							"key": "idUsuarioServicio",
+							"value": "11015",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/tarjetas/registrar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tarjetas",
+						"registrar"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/tarjetas/registrar\" \\\r\n  -H \"Content-Type: application/x-www-form-urlencoded\" \\\r\n  -d \"idTarjeta=18005&numero=4111-1111-1111-1111&titular=Juan Perez&mesVencimiento=12&anioVencimiento=2030&cvv=123&idUsuarioServicio=11001\"\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Registrar Tarjeta sin ID",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"numero\":\"5555555555554444\",\r\n\"titular\":\"Juan Perez\",\r\n\"mesVencimiento\":11,\r\n\"anioVencimiento\":2030,\r\n\"cvv\":124,\r\n\"idUsuarioServicio\":11016\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/tarjetas/new/auto",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tarjetas",
+						"new",
+						"auto"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/tarjetas/new/auto\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\"numero\":\"4111111111111111\",\"titular\":\"Juan Perez\",\"mesVencimiento\":12,\"anioVencimiento\":2030,\"cvv\":123,\"idUsuarioServicio\":11001}'\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "RF8",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"idUsuarioServicio\":11016,\r\n    \"idPuntoPartida\":40008,\r\n    \"idPuntoLlegada\":40009,\r\n    \"tipo\":\"PASAJEROS\",\r\n    \"nivel\":\"CONFORT\",\r\n    \"metodoPago\":\"TARJETA\",\r\n    \"idTarjeta\":112\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/solicitudes/solicitar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"solicitudes",
+						"solicitar"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST http://localhost:8080/solicitudes/solicitar \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"idUsuarioServicio\":11001,\r\n    \"idPuntoPartida\":21001,\r\n    \"idPuntoLlegada\":21002,\r\n    \"tipo\":\"PASAJEROS\",\r\n    \"nivel\":\"CONFORT\",\r\n    \"metodoPago\":\"TARJETA\",\r\n    \"idTarjeta\":18005\r\n  }'\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "RF9",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "distanciaKm",
+							"value": "7.85",
+							"type": "text"
+						},
+						{
+							"key": "costoTotal",
+							"value": "14500",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/viajes/8012/finalizar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"viajes",
+						"8012",
+						"finalizar"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/viajes/12014/finalizar\" \\\r\n  -H \"Content-Type: application/x-www-form-urlencoded\" \\\r\n  --data-urlencode \"distanciaKm=7.85\" \\\r\n  --data-urlencode \"costoTotal=14500\"\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "RF9 - sin tocar el monto",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/viajes/8012/finalizar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"viajes",
+						"8012",
+						"finalizar"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/viajes/12014/finalizar\" \\\r\n  -H \"Content-Type: application/x-www-form-urlencoded\"\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "RF10",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idResenia",
+							"value": "900006",
+							"type": "text"
+						},
+						{
+							"key": "idViaje",
+							"value": "8008",
+							"type": "text"
+						},
+						{
+							"key": "idUsuarioServicio",
+							"value": "11016",
+							"type": "text"
+						},
+						{
+							"key": "calificacion",
+							"value": "5",
+							"type": "text"
+						},
+						{
+							"key": "comentario",
+							"value": "excelente servicio",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/resenias/pasajero",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"resenias",
+						"pasajero"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/resenias/pasajero\" \\\r\n  -H \"Content-Type: application/x-www-form-urlencoded\" \\\r\n  -d \"idResenia=900001\" \\\r\n  -d \"idViaje=<<ID_VIAJE_FINALIZADO>>\" \\\r\n  -d \"idUsuarioServicio=<<ID_USUARIO_SERVICIO_DE_LA_SOLICITUD>>\" \\\r\n  -d \"calificacion=5\" \\\r\n  -d \"comentario=excelente servicio\"\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "RF11",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idResenia",
+							"value": "900007",
+							"type": "text"
+						},
+						{
+							"key": "idViaje",
+							"value": "8008",
+							"type": "text"
+						},
+						{
+							"key": "idUsuarioConductor",
+							"value": "162",
+							"type": "text"
+						},
+						{
+							"key": "calificacion",
+							"value": "4",
+							"type": "text"
+						},
+						{
+							"key": "comentario",
+							"value": "pasajero puntual y cordial",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/resenias/conductor",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"resenias",
+						"conductor"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/resenias/conductor\" \\\r\n  -H \"Content-Type: application/x-www-form-urlencoded\" \\\r\n  -d \"idResenia=900002\" \\\r\n  -d \"idViaje=<<ID_VIAJE_FINALIZADO>>\" \\\r\n  -d \"idUsuarioConductor=<<ID_CONDUCTOR_DEL_VIAJE>>\" \\\r\n  -d \"calificacion=4\" \\\r\n  -d \"comentario=pasajero puntual y cordial\"\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "RFC1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/reportes/usuario/11016/servicios",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reportes",
+						"usuario",
+						"11016",
+						"servicios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RFC1 - V2",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idUsuarioServicio",
+							"value": "11012",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/reportes/usuario/servicios",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reportes",
+						"usuario",
+						"servicios"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/reportes/usuario/servicios\" \\\r\n  -H \"Content-Type: application/x-www-form-urlencoded\" \\\r\n  --data \"idUsuarioServicio=11012\"\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "RFC1 - Read Commited",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idUsuarioServicio",
+							"value": "11016",
+							"type": "text"
+						},
+						{
+							"key": "isolation",
+							"value": "RC",
+							"type": "text"
+						},
+						{
+							"key": "waitSeconds",
+							"value": "30",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/reportes/usuario/servicios-tx",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reportes",
+						"usuario",
+						"servicios-tx"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/reportes/usuario/servicios-tx\" \\\r\n  -H \"Content-Type: application/x-www-form-urlencoded\" \\\r\n  --data \"idUsuarioServicio=11012&isolation=RC&waitSeconds=30\"\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "RFC1 - Serializable",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idUsuarioServicio",
+							"value": "11016",
+							"type": "text"
+						},
+						{
+							"key": "isolation",
+							"value": "SER",
+							"type": "text"
+						},
+						{
+							"key": "waitSeconds",
+							"value": "30",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/reportes/usuario/servicios-tx",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reportes",
+						"usuario",
+						"servicios-tx"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/reportes/usuario/servicios-tx\" \\\r\n  -H \"Content-Type: application/x-www-form-urlencoded\" \\\r\n  --data \"idUsuarioServicio=11012&isolation=SER&waitSeconds=30\"\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "RFC2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/reportes/conductores/top20",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reportes",
+						"conductores",
+						"top20"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RFC3",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idConductor",
+							"value": "162",
+							"type": "text"
+						},
+						{
+							"key": "pctComision",
+							"value": "0.15",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/reportes/conductor/ingresos-vehiculos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reportes",
+						"conductor",
+						"ingresos-vehiculos"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/reportes/conductor/ingresos-vehiculos\" \\\r\n  -H \"Content-Type: application/x-www-form-urlencoded\" \\\r\n  --data \"idConductor=141&pctComision=0.15\"\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "RFC4",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idCiudad",
+							"value": "23",
+							"type": "text"
+						},
+						{
+							"key": "desde",
+							"value": "2025-11-01",
+							"type": "text"
+						},
+						{
+							"key": "hasta",
+							"value": "2025-11-08",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/reportes/ciudad/utilizacion",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reportes",
+						"ciudad",
+						"utilizacion"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/reportes/ciudad/utilizacion\" \\\r\n  -H \"Content-Type: application/x-www-form-urlencoded\" \\\r\n  --data \"idCiudad=19&desde=2025-11-01&hasta=2025-11-08\"\r\n"
+			},
+			"response": []
+		}
+	]
+}

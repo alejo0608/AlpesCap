@@ -45,11 +45,7 @@ public class ReseniaServiceImpl implements ReseniaService {
         }
 
         // 3) Verificar estado FINALIZADA
-        String estado = solicitudRepo.findEstadoById(idSolicitud);
-        if (estado == null) {
-            throw new IllegalStateException("Solicitud no encontrada para el viaje: " + idViaje);
-        }
-        if (!"FINALIZADA".equalsIgnoreCase(estado)) {
+        if (viajeRepo.countCerrado(idViaje) == 0) {
             throw new IllegalStateException("El viaje aún no está finalizado");
         }
 
@@ -60,7 +56,7 @@ public class ReseniaServiceImpl implements ReseniaService {
         }
 
         // 5) Control de duplicado por rol (app-level, sin UNIQUE en SQL)
-        if (reseniaRepo.countByViajeAndRol(idViaje, "PASAJERO") > 0) {
+        if (reseniaRepo.countByViajeAndRol(idViaje, "USR") > 0) {
             throw new IllegalStateException("Ya existe reseña PASAJERO para este viaje");
         }
 
@@ -72,7 +68,7 @@ public class ReseniaServiceImpl implements ReseniaService {
                 (comentario == null ? "" : comentario),
                 fecha,
                 idViaje,
-                "PASAJERO"
+                "USR"
         );
     }
 
@@ -94,11 +90,7 @@ public class ReseniaServiceImpl implements ReseniaService {
         if (idSolicitud == null) {
             throw new IllegalStateException("El viaje no tiene solicitud asociada");
         }
-        String estado = solicitudRepo.findEstadoById(idSolicitud);
-        if (estado == null) {
-            throw new IllegalStateException("Solicitud no encontrada para el viaje: " + idViaje);
-        }
-        if (!"FINALIZADA".equalsIgnoreCase(estado)) {
+        if (viajeRepo.countCerrado(idViaje) == 0) {
             throw new IllegalStateException("El viaje aún no está finalizado");
         }
 
@@ -109,7 +101,7 @@ public class ReseniaServiceImpl implements ReseniaService {
         }
 
         // 4) Control de duplicado
-        if (reseniaRepo.countByViajeAndRol(idViaje, "CONDUCTOR") > 0) {
+        if (reseniaRepo.countByViajeAndRol(idViaje, "COND") > 0) {
             throw new IllegalStateException("Ya existe reseña CONDUCTOR para este viaje");
         }
 
@@ -121,7 +113,7 @@ public class ReseniaServiceImpl implements ReseniaService {
                 (comentario == null ? "" : comentario),
                 fecha,
                 idViaje,
-                "CONDUCTOR"
+                "COND"
         );
     }
 

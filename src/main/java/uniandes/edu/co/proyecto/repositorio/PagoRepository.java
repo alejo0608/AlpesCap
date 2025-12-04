@@ -14,19 +14,12 @@ public interface PagoRepository extends JpaRepository<Pago, Long> {
   // ¿Ya existe pago para un viaje? (1:1 con VIAJE)
   boolean existsByViaje_IdViaje(Long idViaje);
 
-  @Query(value = "SELECT COUNT(1) FROM PAGO WHERE ID_VIAJE = :id", nativeQuery = true)
-  int countByViaje(@Param("id") Long idViaje);
-
   Optional<Pago> findByViaje_IdViaje(Long idViaje);
 
-  // Útil para RF9 si cambias estado del pago
-  @Modifying
+  @Modifying(clearAutomatically = true, flushAutomatically = true)
   @Transactional
-  @Query(value = "UPDATE PAGO SET ESTADO = :estado WHERE ID_PAGO = :idPago", nativeQuery = true)
-  int actualizarEstado(@Param("idPago") Long idPago, @Param("estado") String estado);
-
-  @Modifying @Transactional
   @Query(value = """
+<<<<<<< HEAD
       INSERT INTO PAGO
         (ID_PAGO, ID_VIAJE, MONTO, FECHA, ESTADO, METODO)
       VALUES
@@ -38,5 +31,42 @@ public interface PagoRepository extends JpaRepository<Pago, Long> {
                     @Param("fecha") String fecha,
                     @Param("estado") String estado,
                     @Param("metodo") String metodo);
+=======
+    INSERT INTO PAGO
+      (ID_PAGO, METODO, ID_TARJETA, ID_VIAJE, MONTO, FECHA, ESTADO)
+    VALUES
+      (:idPago, :metodo, :idTarjeta, :idViaje, :monto, SYSDATE, :estado)
+  """, nativeQuery = true)
+  int insertarPagoConViaje(@Param("idPago") Long idPago,
+                           @Param("metodo") String metodo,      // TARJETA | EFECTIVO | WALLET | PSE
+                           @Param("idTarjeta") Long idTarjeta,  // null si no aplica
+                           @Param("idViaje") Long idViaje,
+                           @Param("monto") Double monto,
+                           @Param("estado") String estado);     // APROBADO | RECHAZADO | EN ESPERA
+>>>>>>> 272710786a2bb988c7b90c83acb8e2f96a6caf0f
 
+  
+//
+@Query(value = "SELECT COUNT(1) FROM PAGO WHERE ID_VIAJE = :idViaje", nativeQuery = true)
+int countByViaje(@Param("idViaje") Long idViaje);
+
+@Query(value = "SELECT ID_PAGO FROM PAGO WHERE ID_VIAJE = :idViaje FETCH FIRST 1 ROWS ONLY", nativeQuery = true)
+Long findIdByViaje(@Param("idViaje") Long idViaje);
+
+  @Modifying(clearAutomatically = true, flushAutomatically = true)
+  @Transactional
+  @Query(value = "UPDATE PAGO SET ESTADO = :estado WHERE ID_PAGO = :id", nativeQuery = true)
+  int actualizarEstado(@Param("id") Long idPago, @Param("estado") String estado);
+
+// 
+@Modifying
+@Transactional
+@Query(value = """
+    UPDATE PAGO
+       SET ESTADO = 'COMPLETADO'
+     WHERE ID_VIAJE = :idViaje
+       AND UPPER(ESTADO) IN ('EN ESPERA','APROBADO')
+    """, nativeQuery = true)
+int completarPagoPorViaje(@Param("idViaje") Long idViaje);
 }
+

@@ -2,12 +2,14 @@
 package uniandes.edu.co.proyecto.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import uniandes.edu.co.proyecto.modelo.SolicitudServicio;
 import uniandes.edu.co.proyecto.modelo.Viaje;
+import uniandes.edu.co.proyecto.repositorio.PagoRepository;
 import uniandes.edu.co.proyecto.repositorio.SolicitudServicioRepository;
 import uniandes.edu.co.proyecto.repositorio.ViajeRepository;
 import uniandes.edu.co.proyecto.service.ViajeService;
@@ -17,13 +19,60 @@ public class ViajeServiceImpl implements ViajeService {
 
     private final ViajeRepository viajeRepo;
     private final SolicitudServicioRepository solicitudRepo;
+    private final PagoRepository pagoRepo;
 
     // Constructor explícito (Spring lo usa para inyectar los beans)
     public ViajeServiceImpl(ViajeRepository viajeRepo,
-                            SolicitudServicioRepository solicitudRepo) {
+                            SolicitudServicioRepository solicitudRepo,
+                            PagoRepository pagoRepo) {
         this.viajeRepo = viajeRepo;
         this.solicitudRepo = solicitudRepo;
+        this.pagoRepo = pagoRepo;
     }
+
+    private static double round2(Double v) {
+        if (v == null) return 0d;
+        return Math.round(v * 100.0) / 100.0;
+      }
+
+      @Override
+      @Transactional
+      public Map<String, Object> finalizar(Long idViaje, Double distanciaKm, Double costoTotal) {
+        if (idViaje == null || idViaje <= 0) {
+          throw new IllegalArgumentException("idViaje requerido y positivo");
+        }
+        // Validaciones de negocio
+        if (!viajeRepo.existsById(idViaje)) {
+          throw new RuntimeException("Viaje no existe: " + idViaje); // 404
+        }
+        if (viajeRepo.countAbierto(idViaje) == 0) {
+          throw new IllegalStateException("El viaje ya está cerrado"); // 409
+        }
+        if (distanciaKm != null && distanciaKm < 0) {
+          throw new IllegalArgumentException("distanciaKm no puede ser negativa");
+        }
+        if (costoTotal != null && costoTotal < 0) {
+          throw new IllegalArgumentException("costoTotal no puede ser negativo");
+        }
+    
+        // Cerrar viaje (marca HORA_FIN y actualiza (opc) distancia y costo)
+        int upd = viajeRepo.cerrarViaje(idViaje, distanciaKm, costoTotal);
+        if (upd == 0) {
+          throw new RuntimeException("No fue posible cerrar el viaje (posible carrera ya cerrada)");
+        }
+    
+        // (Opcional) Completar pago si estaba EN ESPERA/APROBADO
+        if (pagoRepo != null) {
+          try { pagoRepo.completarPagoPorViaje(idViaje); } catch (Exception ignore) {}
+        }
+    
+        return Map.of(
+          "idViaje", idViaje,
+          "cerrado", true,
+          "distanciaKmFinal", distanciaKm == null ? "(sin cambios)" : round2(distanciaKm),
+          "costoTotalFinal",  costoTotal  == null ? "(sin cambios)" : round2(costoTotal)
+        );
+      }
 
     @Override
     @Transactional
